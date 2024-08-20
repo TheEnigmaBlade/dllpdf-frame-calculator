@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <title>DLLPDF Custom Frame Calculator</title>
+  </head>
+  <body>
+    <div class="page-content">
+      <header>
+        <a href="https://dllpdf.com/">
+          <img src="./dllpdf-logo.jpg" alt="DLLPDF logo" class="header-logo">
+        </a>
+        <span class="header-text">Custom Frame Calculator</span>
+      </header>
+      
+      <div id="app">
+        
+        <div id="extrusion-designer" class="app-section">
+          <div class="designer-top">
+            <span class="designer-width">
+              <label>
+                <input type="number" placeholder="Width" min="0" step="10" class="designer-width-input"/>
+                mm
+              </label>
+            </span>
+          </div>
+          <div class="designer-mid">
+            <span class="designer-extrusion extrusion-type-dllpdf2020" id="designer_holes_editor">
+              <span class="designer-type-label"></span>
+              <span class="designer-holes-editor">
+              </span>
+            </span>
+          </div>
+          <div class="designer-bottom">
+            <!-- TODO: cost and add button -->
+          </div>
+        </div>
+        
+        <div id="cart" class="app-section">
+          <h2>Frame Cart</h2>
+          <!-- TODO -->
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
