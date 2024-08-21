@@ -49,7 +49,9 @@ function setHoleEditorClickable(elem) {
 	}
 }
 
-setHoleEditorClickable(document.querySelector(".designer-holes-editor"));
+for (let elem of document.getElementsByClassName("designer-holes-editor")) {
+	setHoleEditorClickable(elem);
+}
 
 /**
  * @param elem {HTMLElement}
@@ -106,8 +108,6 @@ function setHoleDraggable(elem) {
 function clampPosition(pos, bounds) {
 	return Math.max(0, Math.min(bounds.width - 2, pos));
 }
-
-setHoleDraggable(document.querySelector(".designer-hole"))
 
 
 

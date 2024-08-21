@@ -14,7 +14,6 @@ export default {
 			// minify: true,
 			pages: [
 				{
-					filename: "index.html",
 					template: "index.html"
 				}
 			]
