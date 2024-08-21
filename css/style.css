@@ -57,7 +57,7 @@ header {
   margin-bottom: 2em;
 }
 
-#extrusion-designer {
+.extrusion-designer {
   flex-grow: 0;
   
   display: flex;
@@ -107,7 +107,7 @@ header {
 }
 
 
-.designer-mid {
+.designer-side {
   display: flex;
   flex-direction: row;
 }

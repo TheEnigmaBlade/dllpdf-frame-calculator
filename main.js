@@ -113,9 +113,9 @@ setHoleDraggable(document.querySelector(".designer-hole"))
 
 
 
-import javascriptLogo from './javascript.svg';
-import viteLogo from '/vite.svg';
-import { setupCounter } from './counter.js';
+// import javascriptLogo from './javascript.svg';
+// import viteLogo from '/vite.svg';
+// import { setupCounter } from './counter.js';
 
 // <a href="https://vitejs.dev" target="_blank">
 //   <img src="${viteLogo}" class="logo" alt="Vite logo" />

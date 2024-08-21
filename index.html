@@ -17,7 +17,7 @@
       
       <div id="app">
         
-        <div id="extrusion-designer" class="app-section">
+        <div class="app-section extrusion-designer">
           <div class="designer-top">
             <span class="designer-width">
               <label>
@@ -26,16 +26,15 @@
               </label>
             </span>
           </div>
-          <div class="designer-mid">
+          <% for (let sideClass of ["designer-side1", "designer-side2"]) { %>
+          <div class="designer-side <%= sideClass %>">
             <span class="designer-extrusion extrusion-type-dllpdf2020" id="designer_holes_editor">
               <span class="designer-type-label"></span>
               <span class="designer-holes-editor">
               </span>
             </span>
           </div>
-          <div class="designer-bottom">
-            <!-- TODO: cost and add button -->
-          </div>
+          <% } %>
         </div>
         
         <div id="cart" class="app-section">

@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "vite": "^5.4.1",
+    "vite-plugin-html": "^3.2.2",
     "lightningcss": "^1.25.1"
   }
 }
