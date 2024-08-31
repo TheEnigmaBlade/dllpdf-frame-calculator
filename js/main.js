@@ -1,5 +1,7 @@
-import "./css/reset.css";
-import "./css/style.css";
+import "/css/reset.css";
+import "/css/style.css";
+
+import {CartItem, addCartItem} from "./frame-cart.js";
 
 //
 // Functionality
@@ -109,8 +111,39 @@ function clampPosition(pos, bounds) {
 	return Math.max(0, Math.min(bounds.width - 2, pos));
 }
 
+function addFrameEvent(elem) {
+	console.debug("Add frame event");
+	console.debug("New debug!");
+	addCartItem(new CartItem({
+		name: "Test name",
+		type: "DLLPDF-2020",
+		length: 300,
+		quantity: 1,
+		holes: {
+			side1: [],
+			side2: []
+		}
+	}));
+}
+for (let elem of document.getElementsByClassName("add-frame-button")) {
+	elem.addEventListener("click", addFrameEvent);
+}
 
+function editFrameEvent(elem) {
+	console.debug("Edit frame event");
+	
+}
+for (let elem of document.getElementsByClassName("edit-frame-button")) {
+	elem.addEventListener("click", editFrameEvent);
+}
 
+function resetFrameEvent() {
+	console.debug("Reset frame event");
+	
+}
+for (let elem of document.getElementsByClassName("reset-frame-button")) {
+	elem.addEventListener("click", resetFrameEvent);
+}
 
 
 // import javascriptLogo from './javascript.svg';

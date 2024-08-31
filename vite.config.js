@@ -11,12 +11,13 @@ export default {
 	},
 	"plugins": [
 		createHtmlPlugin({
-			// minify: true,
-			pages: [
-				{
-					template: "index.html"
+			minify: true,
+			template: "views/index.html",
+			inject: {
+				data: {
+					isDev: true,
 				}
-			]
+			}
 		})
 	]
 }
