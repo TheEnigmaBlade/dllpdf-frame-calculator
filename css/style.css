@@ -82,52 +82,74 @@ header {
   flex-grow: 0;
   
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  
+  .extrusion-designer-left {
+    flex-grow: 0;
+    
+    margin-right: 2em;
+    padding-top: 2.4em;
+  }
+  
+  .extrusion-designer-right {
+    flex-grow: 1;
+    
+    display: flex;
+    flex-direction: column;
+  }
   
   .designer-top {
-    
+    margin-bottom: 0.5em;
   }
   
   .designer-width {
-    --side-width: 37%;
-    
     text-align: center;
     
     padding: 0 1em;
-  }
-  
-  .designer-width::before,
-  .designer-width::after {
-    /*background-color: #000;*/
-    border-top: 1px solid black;
-    content: "";
-    display: inline-block;
-    height: 0.3em;
-    position: relative;
-    vertical-align: middle;
-    width: var(--side-width);
-  }
-  
-  .designer-width::before {
-    right: 0.5em;
-    margin-left: calc(-1 * var(--side-width));
-    border-left: 1px solid black;
-  }
-  
-  .designer-width::after {
-    left: 0.5em;
-    margin-right: calc(-1 * var(--side-width));
-    border-right: 1px solid black;
+    
+    --middle-width: 7.8em;
+    --side-spacing: 0.5em;
+    --side-width: calc(50% - var(--middle-width)/2 - var(--side-spacing));
+    
+    .designer-width-middle {
+      width: var(--middle-width);
+    }
+    
+    &::before,
+    &::after {
+      /*background-color: #000;*/
+      border-top: 1px solid black;
+      content: "";
+      display: inline-block;
+      height: 0.3em;
+      position: relative;
+      vertical-align: middle;
+      width: var(--side-width);
+    }
+    
+    &::before {
+      right: var(--side-spacing);
+      margin-left: calc(-1 * var(--side-width));
+      border-left: 1px solid black;
+    }
+    &::after {
+      left: var(--side-spacing);
+      margin-right: calc(-1 * var(--side-width));
+      border-right: 1px solid black;
+    }
   }
   
   .designer-width-input {
     max-width: 5em;
   }
   
-  
   .designer-side {
     display: flex;
     flex-direction: row;
+  }
+  
+  .designer-side-1 {
+    margin-bottom: 2em;
   }
   
   .designer-extrusion {
@@ -137,8 +159,6 @@ header {
     height: var(--extrusion-height);
     line-height: calc(var(--extrusion-height) - 0.5em);
     position: relative;
-    
-    margin: 0.4em 5em;
     
     border: 2px solid #5e5e5e;
     
@@ -176,6 +196,32 @@ header {
     
     .controls-right {
       float: right;
+    }
+  }
+  
+  .designer-type-display {
+    width: 10em;
+    height: 10em;
+  }
+  
+  .extrusion-cross-section svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    
+    path {
+      stroke: black;
+      stroke-width: 7px;
+      
+      fill: none;
+    }
+  }
+  
+  .extrusion-type-inputs {
+    margin-top: 1em;
+    
+    input, select {
+      width: 100%;
     }
   }
 }

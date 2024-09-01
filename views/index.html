@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/dllpdf1515.svg" />
     <title>DLLPDF Custom Frame Calculator</title>
   </head>
   <body>
@@ -19,33 +19,51 @@
         
         <%# Extrusion designer %>
         <div class="app-section extrusion-designer">
-          <%# Width entry %>
-          <div class="designer-top">
-            <span class="designer-width">
-              <label>
-                <input type="number" placeholder="Width" min="0" step="10" class="designer-width-input"/>
-                mm
-              </label>
-            </span>
+          <%# Left side %>
+          <div class="extrusion-designer-left">
+            <div class="extrusion-cross-section designer-type-display">
+              <%# Filled dynamically %>
+            </div>
+            <div class="extrusion-type-inputs">
+              <select class="extrusion-type-select">
+                <option value="DLLPDF-1515">DLLPDF 1515</option>
+                <option value="DLLPDF-2020" selected>DLLPDF 2020</option>
+                <option value="DLLPDF-153030">DLLPDF 151530</option>
+                <option value="DLLPDF-2040">DLLPDF 2040</option>
+              </select>
+            </div>
           </div>
           
-          <%# Hole creation %>
-          <% for (let sideClass of ["designer-side1", "designer-side2"]) { %>
-          <div class="designer-side <%= sideClass %>">
-            <span class="designer-extrusion extrusion-type-dllpdf2020" id="designer_holes_editor">
-              <span class="designer-type-label"></span>
-              <span class="designer-holes-editor">
+          <%# Right side %>
+          <div class="extrusion-designer-right">
+            <%# Width entry %>
+            <div class="designer-top">
+              <span class="designer-width">
+                <label class="designer-width-middle">
+                  <input type="number" placeholder="Width" min="0" step="10" class="designer-width-input"/>
+                  mm
+                </label>
               </span>
-            </span>
-          </div>
-          <% } %>
-          
-          <%# Controls %>
-          <div class="designer-controls">
-            <div class="control-group">
-              <button class="add-frame-button">Add new to frame</button>
-              <button class="edit-frame-button" disabled>Save edit</button>
-              <span class="controls-right"><button class="reset-frame-button">Reset</button></span>
+            </div>
+            
+            <%# Hole creation %>
+            <% for (let sideClass of ["designer-side-1", "designer-side-2"]) { %>
+            <div class="designer-side <%= sideClass %>">
+              <span class="designer-extrusion extrusion-type-dllpdf2020" id="designer_holes_editor">
+                <span class="designer-type-label"></span>
+                <span class="designer-holes-editor">
+                </span>
+              </span>
+            </div>
+            <% } %>
+            
+            <%# Controls %>
+            <div class="designer-controls">
+              <div class="control-group">
+                <button class="add-frame-button">Add new</button>
+                <button class="edit-frame-button" disabled>Save edit</button>
+                <span class="controls-right"><button class="reset-frame-button">Reset</button></span>
+              </div>
             </div>
           </div>
         </div>

@@ -3,6 +3,15 @@ import "/css/style.css";
 
 import {CartItem, addCartItem} from "./frame-cart.js";
 
+import csDllpdf1515 from "/dllpdf1515.svg?raw";
+import csDllpdf2020 from "/dllpdf2020.svg?raw";
+import csDllpdf1530 from "/dllpdf153030.svg?raw";
+import csDllpdf2040 from "/dllpdf2040.svg?raw";
+
+for (let elem of document.getElementsByClassName("extrusion-cross-section")) {
+	elem.innerHTML = csDllpdf1515; 
+}
+
 //
 // Functionality
 //
