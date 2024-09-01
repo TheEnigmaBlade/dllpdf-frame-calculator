@@ -1,11 +1,15 @@
 export const ExtrusionTypes = {
+	DLLPDF1515: "DLLPDF-1515",
 	DLLPDF2020: "DLLPDF-2020",
-	Misumi2020: "Misumi-2020",
+	DLLPDF1530: "DLLPDF-153030",
+	DLLPDF2040: "DLLPDF-2040",
 }
 
 const rateTable = new Map([
+	[ExtrusionTypes.DLLPDF1515, 0.02],
 	[ExtrusionTypes.DLLPDF2020, 0.03],
-	[ExtrusionTypes.DLLPDF2020, 0.05],
+	[ExtrusionTypes.DLLPDF1530, 0.06],
+	[ExtrusionTypes.DLLPDF2040, 0.07],
 ]);
 const holeRate = 0.5;
 
