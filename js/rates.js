@@ -11,7 +11,7 @@ const rateTable = new Map([
 	[ExtrusionTypes.DLLPDF1530, 0.06],
 	[ExtrusionTypes.DLLPDF2040, 0.07],
 ]);
-const holeRate = 0.5;
+const holeRate = 1.0;
 
 /**
  * @param {string} type

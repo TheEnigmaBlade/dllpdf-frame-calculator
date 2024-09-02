@@ -12,7 +12,7 @@ export class CartItem {
 		/** @type int */
 		this.length = rawItem.length;
 		/** @type int */
-		this.quantity = rawItem.quantity;
+		this.quantity = rawItem.quantity || 1;
 		/** @type {{side1: [int], side2: [int]}} */
 		this.holes = rawItem.holes;
 	}
@@ -33,14 +33,17 @@ export class CartItem {
 }
 
 const cartItemTemplate = compile('\
-	<div class="frame-cart-item row" data-id="<%= item.id %>" data-specs="<%= data %>"> \
-	  <span class="col col-0"><button class="delete-button">X</button> <button class="edit-button">E</button></span> \
-	  <span class="col col-1"><input class="name-input" type="text" value="<%= item.name %>" /></span> \
-	  <span class="col col-2"><%= item.type %></span> \
-	  <span class="col col-3"><%= item.length %> mm</span> \
-	  <span class="col col-4"></span> \
-	  <span class="col col-5"><input class="quantity-input" type="number" min="1" max="99" value="<%= item.quantity %>"/></span> \
-	  <span class="col col-6"></span> \
+	<div class="frame-cart-item row" data-id="<%= item.id %>" data-specs="<%= data %>">\
+	  <span class="col col-0">\
+	  	<button class="cart-item-button delete-button"><img src="trash.svg" alt="Delete" width="18" height="18"/></button> \
+	  	<button class="cart-item-button edit-button"><img src="pencil.svg" alt="Edit" width="18" height="18"/></button>\
+	  </span> \
+	  <span class="col col-1"><input class="name-input" type="text" value="<%= item.name %>" /></span>\
+	  <span class="col col-2"><%= item.type %></span>\
+	  <span class="col col-3"><%= item.length %> mm</span>\
+	  <span class="col col-4"></span>\
+	  <span class="col col-5"><input class="quantity-input" type="number" min="1" max="99" value="<%= item.quantity %>"/></span>\
+	  <span class="col col-6"></span>\
 	</div>');
 
 /**

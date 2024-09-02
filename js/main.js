@@ -1,29 +1,50 @@
 import "/css/reset.css";
 import "/css/style.css";
 
-import {initExtrusionEditor} from "./extrusion-designer.js";
+import {initExtrusionEditor, getExtrusionState} from "./extrusion-designer.js";
 import {CartItem, addCartItem} from "./frame-cart.js";
 
-initExtrusionEditor(document.getElementById("extrusion_designer"));
+//
+// Functionality
+//
 
-function addFrameEvent(elem) {
+function addExtrusion() {
+	const designerElem = document.getElementById("extrusion_designer");
+	const designerState = getExtrusionState(designerElem);
+	
+	// Validate the state, ex. make sure a length was entered
+	if (isNaN(designerState.length) || designerState.length <= 0) {
+		// TODO: report error
+		return;
+	}
+	
+	addCartItem(new CartItem(designerState));
+}
+
+//
+// UI events
+//
+
+/**
+ * @param event {Event}
+ */
+function addFrameEvent(event) {
 	console.debug("Add frame event");
-	console.debug("New debug!");
-	addCartItem(new CartItem({
-		name: "Test name",
-		type: "DLLPDF-2020",
-		length: 300,
-		quantity: 1,
-		holes: {
-			side1: [],
-			side2: []
-		}
-	}));
-}
-function editFrameEvent(elem) {
-	console.debug("Edit frame event");
-	// TODO
+	addExtrusion();
 }
 
+/**
+ * @param event {Event}
+ */
+function addCopyFrameEvent(event) {
+	console.debug("Add copy frame event");
+	addExtrusion();
+}
+
+//
+// Initialization
+//
+
+initExtrusionEditor(document.getElementById("extrusion_designer"));
 document.getElementById("add-frame").addEventListener("click", addFrameEvent);
-document.getElementById("edit-frame").addEventListener("click", editFrameEvent);
+document.getElementById("add-copy-frame").addEventListener("click", addCopyFrameEvent);

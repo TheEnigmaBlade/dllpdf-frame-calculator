@@ -1,4 +1,3 @@
-
 :root {
   --background-color: white;
   
@@ -40,6 +39,10 @@ button:hover {
   border-color: #646cff;
 }
 
+.delete-button:hover {
+  border-color: red;
+}
+
 h2 {
   margin-bottom: 1em;
 }
@@ -48,21 +51,21 @@ h2 {
 
 header {
   margin-bottom: 3rem;
-}
-
-.header-logo {
-  height: 4em;
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.header-text {
-  font-size: 2em;
-  font-weight: 600;
-  color: #1a1a1a;
   
-  vertical-align: middle;
-  margin-left: 0.6em;
+  .header-logo {
+    height: 4em;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  .header-text {
+    font-size: 2em;
+    font-weight: 600;
+    color: #1a1a1a;
+    
+    vertical-align: middle;
+    margin-left: 0.6em;
+  }
 }
 
 /* Main content */
@@ -146,10 +149,10 @@ header {
   .designer-side {
     display: flex;
     flex-direction: row;
-  }
-  
-  .designer-side-1 {
-    margin-bottom: 2em;
+    
+    &:not(:last-child) {
+      margin-bottom: 2em;
+    }
   }
   
   .designer-extrusion {
@@ -192,10 +195,35 @@ header {
   }
   
   .designer-controls {
+    display: flex;
+    flex-direction: column;
+    
     margin-top: 2em;
     
-    .controls-right {
-      float: right;
+    .control-group {
+      display: flex;
+      flex-direction: row;
+      
+      margin-bottom: 0.4em;
+    }
+    
+    .add-frame-button {
+      width: 100%;
+      height: 2.5em;
+    }
+    
+    .add-copy-frame-button {
+      flex-grow: 1;
+      margin-right: 0.5em;
+    }
+    
+    .reset-frame-button {
+      flex-grow: 1;
+      padding: 0 0.2em;
+      
+      &:hover {
+        border-color: red;
+      }
     }
   }
   
@@ -320,6 +348,8 @@ header {
     background: var(--header-background);
     color: var(--header-text-color);
     border-radius: 4px;
+    
+    margin-bottom: 0.1em;
   }
   
   .frame-cart-list {
@@ -351,6 +381,24 @@ header {
       padding: 0 0.4em;
       line-height: 1.4em;
     }
+    
+    .frame-cart-item {
+      &:hover {
+        .cart-item-button {
+          opacity: 100%;
+        }
+      }
+    }
+    
+    .cart-item-button {
+      width: 1.9em;
+      height: 1.7em;
+      vertical-align: sub;
+      
+      opacity: 60%;
+      
+      transition: opacity 0.3s;
+    }
   }
   
   .frame-cart-footer {
@@ -359,6 +407,10 @@ header {
     
     .frame-cart-total {
       font-size: 1.1em;
+      
+      .total::before {
+        content: "$";
+      }
     }
     
     .total-label {

@@ -1,5 +1,8 @@
 import {ExtrusionTypes} from "./rates.js";
 
+/**
+ * @param elem {HTMLElement}
+ */
 export function initExtrusionEditor(elem) {
 	initEvents(elem);
 	
@@ -7,6 +10,27 @@ export function initExtrusionEditor(elem) {
 	let selectElem = elem.getElementsByClassName("extrusion-type-select")[0]; 
 	selectElem.value = ExtrusionTypes.DLLPDF2020;
 	selectElem.dispatchEvent(new Event("change"));
+}
+
+/**
+ * @param elem {HTMLElement}
+ */
+export function getExtrusionState(elem) {
+	let extrusionType = elem.getElementsByClassName("extrusion-type-select")[0].value;
+	let extrusionLength = elem.getElementsByClassName("designer-width-input")[0].valueAsNumber;
+	
+	let extrusionHoles = {}; 
+	for (let designer of elem.getElementsByClassName("designer-side")) {
+		let sideHoles = [];
+		// TODO
+		extrusionHoles[designer.getAttribute("data-side")] = sideHoles;
+	}
+	
+	return {
+		type: extrusionType,
+		length: extrusionLength,
+		holes: extrusionHoles,
+	};
 }
 
 //
