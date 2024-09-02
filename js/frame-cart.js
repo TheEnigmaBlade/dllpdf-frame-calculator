@@ -32,19 +32,22 @@ export class CartItem {
 	}
 }
 
-const cartItemTemplate = compile('\
-	<div class="frame-cart-item row" data-id="<%= item.id %>" data-specs="<%= data %>">\
-	  <span class="col col-0">\
-	  	<button class="cart-item-button delete-button"><img src="trash.svg" alt="Delete" width="18" height="18"/></button> \
-	  	<button class="cart-item-button edit-button"><img src="pencil.svg" alt="Edit" width="18" height="18"/></button>\
-	  </span> \
-	  <span class="col col-1"><input class="name-input" type="text" value="<%= item.name %>" /></span>\
-	  <span class="col col-2"><%= item.type %></span>\
-	  <span class="col col-3"><%= item.length %> mm</span>\
-	  <span class="col col-4"></span>\
-	  <span class="col col-5"><input class="quantity-input" type="number" min="1" max="99" value="<%= item.quantity %>"/></span>\
-	  <span class="col col-6"></span>\
-	</div>');
+// const cartItemTemplate = compile('\
+// 	<div class="frame-cart-item row" data-id="<%= item.id %>" data-specs="<%= data %>">\
+// 	  <span class="col col-0">\
+// 	  	<button class="cart-item-button delete-button"><img src="trash.svg" alt="Delete" width="18" height="18"/></button> \
+// 	  	<button class="cart-item-button edit-button"><img src="pencil.svg" alt="Edit" width="18" height="18"/></button>\
+// 	  </span> \
+// 	  <span class="col col-1"><input class="name-input" type="text" value="<%= item.name %>" /></span>\
+// 	  <span class="col col-2"><%= item.type %></span>\
+// 	  <span class="col col-3"><%= item.length %> mm</span>\
+// 	  <span class="col col-4"></span>\
+// 	  <span class="col col-5"><input class="quantity-input" type="number" min="1" max="99" value="<%= item.quantity %>"/></span>\
+// 	  <span class="col col-6"></span>\
+// 	</div>');
+
+import cartItemTemplateRaw from "/views/frame_cart_item.ejs?raw";
+const cartItemTemplate = compile(cartItemTemplateRaw);
 
 /**
  * @param itemData {CartItem}
@@ -62,6 +65,8 @@ export function addCartItem(itemData) {
 	cart.appendChild(elem);
 	refreshItem(elem, itemData);
 	setItemEvents(elem);
+	
+	refreshCart();
 }
 
 /**
@@ -83,6 +88,23 @@ function refreshItem(itemElem, itemData) {
 	itemElem.getElementsByClassName("col-6")[0].textContent = itemData.totalCost.toLocaleString("en-EN", {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
+function refreshCart() {
+	console.debug("Refresh cart");
+	
+	// Calculate cart total
+	const cartElem = document.getElementById("frame-cart");
+	let cartTotal = 0;
+	for (let itemElem of cartElem.getElementsByClassName("frame-cart-item")) {
+		let data = new CartItem(JSON.parse(itemElem.getAttribute("data-specs")));
+		cartTotal += data.totalCost;
+	}
+	console.debug(`  cartTotal = ${cartTotal}`);
+	
+	// Update cart total element
+	const totalElem = document.getElementById("frame-cart-total");
+	totalElem.textContent = cartTotal.toLocaleString("en-EN", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
 // UI events
 
 /**
@@ -92,6 +114,7 @@ function deleteItemEvent(event) {
 	console.debug(`Delete item event: id=${event.target["data-id"]}`);
 	event.preventDefault();
 	event.target.closest(".frame-cart-item").remove();
+	refreshCart();
 }
 
 /**
@@ -103,6 +126,8 @@ function editItemEvent(event) {
 	
 	let elem = event.target.closest(".frame-cart-item");
 	// TODO
+	
+	refreshCart();
 }
 
 /**
@@ -120,6 +145,7 @@ function changeNameEvent(event) {
 	console.debug(`  new name = "${data.name}"`);
 	
 	elem.setAttribute("data-specs", JSON.stringify(data));
+	refreshCart();
 }
 
 /**
@@ -137,4 +163,5 @@ function changeQuantityEvent(event) {
 	refreshItem(elem, new CartItem(data));
 	
 	elem.setAttribute("data-specs", JSON.stringify(data));
+	refreshCart();
 }
