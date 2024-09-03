@@ -40,7 +40,7 @@ export function getExtrusionState(elem) {
 import csDllpdf1515 from "/dllpdf1515-web.svg?raw";
 import csDllpdf2020 from "/dllpdf2020-web.svg?raw";
 import csDllpdf1530 from "/dllpdf153030-web.svg?raw";
-import csDllpdf2040 from "/dllpdf2040-web.svg?raw";
+import csMisumi2040 from "/dllpdf2040-web.svg?raw";
 
 /**
  * @param {string} type
@@ -51,7 +51,9 @@ function setExtrusionType(type) {
 		case ExtrusionTypes.DLLPDF1515: extrusionImg = csDllpdf1515; break;
 		case ExtrusionTypes.DLLPDF2020: extrusionImg = csDllpdf2020; break;
 		case ExtrusionTypes.DLLPDF1530: extrusionImg = csDllpdf1530; break;
-		case ExtrusionTypes.DLLPDF2040: extrusionImg = csDllpdf2040; break;
+		case ExtrusionTypes.MISUMI2040: extrusionImg = csMisumi2040; break;
+		case ExtrusionTypes.MISUMI4040: extrusionImg = undefined; break;
+		case ExtrusionTypes.MISUMI2020: extrusionImg = csDllpdf2020; break;
 		default: console.error(`Unknown extrusion type ${type}`);
 	}
 	

@@ -27,10 +27,16 @@
             </div>
             <div class="extrusion-type-inputs">
               <select class="extrusion-type-select">
-                <option value="DLLPDF-1515">DLLPDF 1515</option>
-                <option value="DLLPDF-2020">DLLPDF 2020</option>
-                <option value="DLLPDF-153030">DLLPDF 151530</option>
-                <option value="DLLPDF-2040">DLLPDF 2040</option>
+              <% for (let sidePair of [
+                      ["DLLPDF-1515", "DLLPDF 1515"],
+                      ["DLLPDF-2020", "DLLPDF 2020"],
+                      ["DLLPDF-153030", "DLLPDF 153030"],
+                      ["Misumi-2040", "Misumi 2040 (HSF5)"],
+                      ["Misumi-4040", "Misumi 4040 (HSF5)"],
+                      ["Misumi-2020", "Misumi 2020 (HSFS5)"]
+              ]) { %>
+                <option value="<%= sidePair[0] %>"><%= sidePair[1] %></option>
+              <% } %>
               </select>
             </div>
             
