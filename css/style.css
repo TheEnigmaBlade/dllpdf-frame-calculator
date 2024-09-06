@@ -150,12 +150,12 @@ header {
     display: flex;
     flex-direction: row;
     
-    &:not(:last-child) {
+    &.extrusion-slot-last {
       margin-bottom: 2em;
     }
   }
   
-  .designer-extrusion {
+  .extrusion-side {
     --extrusion-height: 4em;
     
     flex-grow: 1;
@@ -165,24 +165,22 @@ header {
     
     border: 2px solid #5e5e5e;
     
-    &.extrusion-type-dllpdf2020 {
-      &::before,
-      &::after {
-        content: "";
-        display: block;
-        position: absolute;
-        width: 100%;
-        height: 1px;
-        background-color: #878787;
-      }
-        
-      &::before {
-        top: 1em;
-      }
+    &::before,
+    &::after {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      background-color: #878787;
+    }
       
-      &::after {
-        bottom: 1em;
-      }
+    &::before {
+      top: 1em;
+    }
+    
+    &::after {
+      bottom: 1em;
     }
     
     .designer-type-label {

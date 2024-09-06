@@ -65,15 +65,9 @@
             </div>
             
             <%# Hole creation %>
-            <% for (let sideIndex of ["a", "b"]) { %>
-            <div class="designer-side designer-side-<%= sideIndex %>" data-side="<%= sideIndex %>">
-              <span class="designer-extrusion extrusion-type-dllpdf2020" id="designer_holes_editor">
-                <span class="designer-type-label"></span>
-                <span class="designer-holes-editor">
-                </span>
-              </span>
+            <div class="designer-bottom" id="extrusion_designer_sides">
+              <%# Filled dynamically %>
             </div>
-            <% } %>
           </div>
         </div>
         

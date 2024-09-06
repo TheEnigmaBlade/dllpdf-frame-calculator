@@ -1,3 +1,4 @@
+import {compile} from "ejs";
 import {ExtrusionTypes} from "./rates.js";
 
 /**
@@ -46,19 +47,70 @@ import csMisumi2040 from "/dllpdf2040-web.svg?raw";
  * @param {string} type
  */
 function setExtrusionType(type) {
-	let extrusionImg;
+	// Update extrusion images
 	switch (type) {
-		case ExtrusionTypes.DLLPDF1515: extrusionImg = csDllpdf1515; break;
-		case ExtrusionTypes.DLLPDF2020: extrusionImg = csDllpdf2020; break;
-		case ExtrusionTypes.DLLPDF1530: extrusionImg = csDllpdf1530; break;
-		case ExtrusionTypes.MISUMI2040: extrusionImg = csMisumi2040; break;
-		case ExtrusionTypes.MISUMI4040: extrusionImg = undefined; break;
-		case ExtrusionTypes.MISUMI2020: extrusionImg = csDllpdf2020; break;
+		case ExtrusionTypes.DLLPDF1515: setTypeImages(csDllpdf1515); break;
+		case ExtrusionTypes.DLLPDF2020: setTypeImages(csDllpdf2020); break;
+		case ExtrusionTypes.DLLPDF1530: setTypeImages(csDllpdf1530); break;
+		case ExtrusionTypes.MISUMI2040: setTypeImages(csMisumi2040); break;
+		case ExtrusionTypes.MISUMI4040: setTypeImages(undefined); break;
+		case ExtrusionTypes.MISUMI2020: setTypeImages(csDllpdf2020); break;
 		default: console.error(`Unknown extrusion type ${type}`);
 	}
 	
+	// Update hole editor
+	switch (type) {
+		case ExtrusionTypes.DLLPDF1515:
+		case ExtrusionTypes.DLLPDF2020:
+		case ExtrusionTypes.MISUMI2020:
+		case ExtrusionTypes.MISUMI4040:
+			setHoleEditorType([1, 1]);
+			break;
+			
+		case ExtrusionTypes.DLLPDF1530:
+			setHoleEditorType([2, 2]);
+			break;
+		
+		case ExtrusionTypes.MISUMI2040:
+			setHoleEditorType([2, 1]);
+			break;
+			
+		default: console.error(`Unknown extrusion type ${type}`);
+	}
+}
+
+function setTypeImages(extrusionImg) {
 	for (let elem of document.getElementsByClassName("extrusion-cross-section")) {
 		elem.innerHTML = extrusionImg; 
+	}
+}
+
+import editorTemplateRaw from "/views/hole_editor.ejs?raw";
+const editorTemplate = compile(editorTemplateRaw);
+
+/**
+ * @param {number[]} editorLayout	Array of sides, where the value is the number of slots in that side.
+ */
+function setHoleEditorType(editorLayout) {
+	console.debug(`Setting editor layout: ${editorLayout}`);
+	
+	// Clear parent
+	let parent = document.getElementById("extrusion_designer_sides");
+	parent.innerHTML = "";
+	
+	// Add each side to the parent
+	for (let [sideIndex, slotCount] of editorLayout.entries()) {
+		for (let slotIndex = 0; slotIndex < slotCount; slotIndex++) {
+			let elem = document.createElement("div");
+			elem.innerHTML = editorTemplate({
+				sideIndex: sideIndex,
+				maxSlots: slotCount,
+				slotIndex: slotIndex,
+			});
+			
+			elem = parent.appendChild(elem.children[0]);
+			setHoleEditorClickable(elem);
+		}
 	}
 }
 
@@ -99,10 +151,6 @@ function initEvents(parentElem) {
 	for (let elem of parentElem.getElementsByClassName("reset-frame-button")) {
 		elem.addEventListener("click", resetFrameEvent);
 	}
-	// Set editors clickable
-	for (let elem of parentElem.getElementsByClassName("designer-holes-editor")) {
-		setHoleEditorClickable(elem);
-	}
 }
 
 // Controls
@@ -138,7 +186,7 @@ function setHoleEditorClickable(elem) {
 			return;
 		}
 		
-		let parentContainer = elem.closest(".designer-holes-editor");
+		let parentContainer = e.target.closest(".designer-holes-editor");
 		let bounds = parentContainer.getBoundingClientRect();
 		let relativePos = e.clientX - bounds.left;
 		let newPos = Math.round(clampPosition(relativePos, bounds));
