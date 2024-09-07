@@ -99,6 +99,7 @@ function setHoleEditorType(editorLayout) {
 	parent.innerHTML = "";
 	
 	// Add each side to the parent
+	let slotLabel = "A";
 	for (let [sideIndex, slotCount] of editorLayout.entries()) {
 		for (let slotIndex = 0; slotIndex < slotCount; slotIndex++) {
 			let elem = document.createElement("div");
@@ -106,10 +107,13 @@ function setHoleEditorType(editorLayout) {
 				sideIndex: sideIndex,
 				maxSlots: slotCount,
 				slotIndex: slotIndex,
+				slotLabel: slotLabel,
 			});
 			
 			elem = parent.appendChild(elem.children[0]);
 			setHoleEditorClickable(elem);
+			
+			slotLabel = String.fromCharCode(slotLabel.charCodeAt(0) + 1);
 		}
 	}
 }
