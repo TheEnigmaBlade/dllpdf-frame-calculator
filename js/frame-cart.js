@@ -13,7 +13,7 @@ export class CartItem {
 		this.length = rawItem.length;
 		/** @type int */
 		this.quantity = rawItem.quantity || 1;
-		/** @type {{int: {int: [int]}}} */
+		/** @type {{string: {string: [int]}}} */
 		this.holes = rawItem.holes;
 	}
 	

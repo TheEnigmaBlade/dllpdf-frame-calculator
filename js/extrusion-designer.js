@@ -159,7 +159,7 @@ function convertHolePosition(holeElem, parentElem, extrusionLength, fractionDigi
 	let pxPos = parseInt(holeElem.getAttribute("data-pos"));
 	let pxWidth = parentElem.getBoundingClientRect().width.toFixed(0) - 2;
 	let mmPos = (pxPos / pxWidth) * extrusionLength;
-	return mmPos.toFixed(fractionDigits || 0)
+	return mmPos.toFixed(fractionDigits || 0);
 }
 
 //

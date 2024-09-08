@@ -14,11 +14,20 @@ function addExtrusion() {
 	
 	// Validate the state, ex. make sure a length was entered
 	if (isNaN(designerState.length) || designerState.length <= 0) {
-		// TODO: report error
-		return;
+		return "Enter a length";
 	}
 	
 	addCartItem(new CartItem(designerState));
+	return null;
+}
+
+/**
+ * @param event {Event}
+ * @param error {string}
+ */
+function setError(event, error) {
+	let errorElem = event.target.closest(".designer-controls").getElementsByClassName("control-error")[0];
+	errorElem.textContent = error;
 }
 
 //
@@ -30,7 +39,8 @@ function addExtrusion() {
  */
 function addFrameEvent(event) {
 	console.debug("Add frame event");
-	addExtrusion();
+	const err = addExtrusion();
+	setError(event, err);
 }
 
 /**
@@ -38,10 +48,11 @@ function addFrameEvent(event) {
  */
 function addCopyFrameEvent(event) {
 	console.debug("Add copy frame event");
-	addExtrusion();
+	const err = addExtrusion();
+	setError(event, err);
 }
 
-function dumpState(event) {
+function dumpState(_event) {
 	console.debug("Dumping state");
 	const designerState = getExtrusionState(document.getElementById("extrusion_designer"));
 	document.getElementById("dev-state").value = JSON.stringify(designerState, null, 2);
