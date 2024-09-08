@@ -1,19 +1,21 @@
 export const ExtrusionTypes = {
 	DLLPDF1515: "DLLPDF-1515",
 	DLLPDF2020: "DLLPDF-2020",
-	DLLPDF1530: "DLLPDF-153030",
+	DLLPDF153030: "DLLPDF-153030",
 	MISUMI2040: "Misumi-2040",
 	MISUMI4040: "Misumi-4040",
 	MISUMI2020: "Misumi-2020",
+	MISUMI404020: "Misumi-404020",
 }
 
 const rateTable = [
-    { type: ExtrusionTypes.DLLPDF1515, rate: 0.0048, labor: 1 },
-    { type: ExtrusionTypes.DLLPDF2020, rate: 0.0156, labor: 1 },
-    { type: ExtrusionTypes.DLLPDF1530, rate: 0.0222, labor: 4 },
-    { type: ExtrusionTypes.MISUMI2040, rate: 0.0252, labor: 2 },
-    { type: ExtrusionTypes.MISUMI4040, rate: 0.0330, labor: 4 },
-    { type: ExtrusionTypes.MISUMI2020, rate: 0.0192, labor: 1 }
+    { type: ExtrusionTypes.DLLPDF1515,	 rate: 0.0048, labor: 1 },
+    { type: ExtrusionTypes.DLLPDF2020,	 rate: 0.0156, labor: 1 },
+    { type: ExtrusionTypes.DLLPDF153030, rate: 0.0222, labor: 4 },
+    { type: ExtrusionTypes.MISUMI2040, 	 rate: 0.0252, labor: 2 },
+    { type: ExtrusionTypes.MISUMI4040, 	 rate: 0.0330, labor: 4 },
+    { type: ExtrusionTypes.MISUMI2020, 	 rate: 0.0192, labor: 1 },
+	{ type: ExtrusionTypes.MISUMI404020, rate: 0.0350, labor: 4 }
 ];
 const laborAdj = 150/60;
 

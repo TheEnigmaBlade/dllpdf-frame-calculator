@@ -442,3 +442,11 @@ header {
     }
   }
 }
+
+#dev-state {
+  font-family: "Cascadia Mono", monospace;
+  font-size: 13px;
+  text-align: left;
+  width: 40%;
+  height: 30em;
+}

@@ -20,11 +20,26 @@ export function getExtrusionState(elem) {
 	let extrusionType = elem.getElementsByClassName("extrusion-type-select")[0].value;
 	let extrusionLength = elem.getElementsByClassName("designer-width-input")[0].valueAsNumber;
 	
-	let extrusionHoles = {}; 
-	for (let designer of elem.getElementsByClassName("designer-side")) {
-		let sideHoles = [];
-		// TODO
-		extrusionHoles[designer.getAttribute("data-side")] = sideHoles;
+	let extrusionHoles = {};
+	for (let sideElem of elem.getElementsByClassName("designer-side")) {
+		let sideIndex = sideElem.getAttribute("data-side");
+		let slotIndex = sideElem.getAttribute("data-slot");
+		console.debug(`side=${sideIndex}, slot=${slotIndex}`);
+		if (!extrusionHoles.hasOwnProperty(sideIndex)) {
+			extrusionHoles[sideIndex] = {};
+		}
+		
+		let holesElem = sideElem.getElementsByClassName("designer-holes-editor")[0];
+		let slotHoles = [];
+		for (let holeElem of holesElem.getElementsByClassName("designer-hole")) {
+			let pxPos = parseInt(holeElem.getAttribute("data-pos"));
+			let pxWidth = holesElem.getBoundingClientRect().width.toFixed(0) - 2;
+			console.debug(pxWidth);
+			let mmPos = (pxPos / pxWidth) * extrusionLength;
+			slotHoles.push(mmPos.toFixed(1));
+		}
+		
+		extrusionHoles[sideIndex][slotIndex] = slotHoles;
 	}
 	
 	return {
@@ -40,8 +55,10 @@ export function getExtrusionState(elem) {
 
 import csDllpdf1515 from "/dllpdf1515-web.svg?raw";
 import csDllpdf2020 from "/dllpdf2020-web.svg?raw";
-import csDllpdf1530 from "/dllpdf153030-web.svg?raw";
+import csDllpdf153030 from "/dllpdf153030-web.svg?raw";
 import csMisumi2040 from "/dllpdf2040-web.svg?raw";
+import csMisumi4040 from "/hfs5_4040-web.svg?raw";
+import csMisumi404020 from "/hfs5_404020-web.svg?raw";
 
 /**
  * @param {string} type
@@ -49,12 +66,13 @@ import csMisumi2040 from "/dllpdf2040-web.svg?raw";
 function setExtrusionType(type) {
 	// Update extrusion images
 	switch (type) {
-		case ExtrusionTypes.DLLPDF1515: setTypeImages(csDllpdf1515); break;
-		case ExtrusionTypes.DLLPDF2020: setTypeImages(csDllpdf2020); break;
-		case ExtrusionTypes.DLLPDF1530: setTypeImages(csDllpdf1530); break;
-		case ExtrusionTypes.MISUMI2040: setTypeImages(csMisumi2040); break;
-		case ExtrusionTypes.MISUMI4040: setTypeImages(undefined); break;
-		case ExtrusionTypes.MISUMI2020: setTypeImages(csDllpdf2020); break;
+		case ExtrusionTypes.DLLPDF1515:   setTypeImages(csDllpdf1515); break;
+		case ExtrusionTypes.DLLPDF2020:   setTypeImages(csDllpdf2020); break;
+		case ExtrusionTypes.DLLPDF153030: setTypeImages(csDllpdf153030); break;
+		case ExtrusionTypes.MISUMI2040:   setTypeImages(csMisumi2040); break;
+		case ExtrusionTypes.MISUMI4040:   setTypeImages(csMisumi4040); break;
+		case ExtrusionTypes.MISUMI2020:   setTypeImages(csDllpdf2020); break;
+		case ExtrusionTypes.MISUMI404020: setTypeImages(csMisumi404020); break;
 		default: console.error(`Unknown extrusion type ${type}`);
 	}
 	
@@ -63,11 +81,12 @@ function setExtrusionType(type) {
 		case ExtrusionTypes.DLLPDF1515:
 		case ExtrusionTypes.DLLPDF2020:
 		case ExtrusionTypes.MISUMI2020:
-		case ExtrusionTypes.MISUMI4040:
 			setHoleEditorType([1, 1]);
 			break;
 			
-		case ExtrusionTypes.DLLPDF1530:
+		case ExtrusionTypes.DLLPDF153030:
+		case ExtrusionTypes.MISUMI4040:
+		case ExtrusionTypes.MISUMI404020:
 			setHoleEditorType([2, 2]);
 			break;
 		
@@ -134,6 +153,7 @@ function addHole(pos, parent) {
 	let holeElem = document.createElement("i");
 	holeElem.className = "designer-hole";
 	holeElem.style.left = `${pos}px`;
+	holeElem.setAttribute("data-pos", pos.toString());
 	
 	parent.appendChild(holeElem);
 	setHoleDraggable(holeElem);
@@ -247,6 +267,7 @@ function setHoleDraggable(elem) {
 		//console.debug(`${newPos} [${e.clientX} -> ${relativePos}]`);
 		
 		elem.style.left = `${newPos}px`;
+		elem.setAttribute("data-pos", newPos.toString());
 	}
 }
 

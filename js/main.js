@@ -41,6 +41,12 @@ function addCopyFrameEvent(event) {
 	addExtrusion();
 }
 
+function dumpState(event) {
+	console.debug("Dumping state");
+	const designerState = getExtrusionState(document.getElementById("extrusion_designer"));
+	document.getElementById("dev-state").value = JSON.stringify(designerState, null, 2);
+}
+
 //
 // Initialization
 //
@@ -48,3 +54,4 @@ function addCopyFrameEvent(event) {
 initExtrusionEditor(document.getElementById("extrusion_designer"));
 document.getElementById("add-frame").addEventListener("click", addFrameEvent);
 document.getElementById("add-copy-frame").addEventListener("click", addCopyFrameEvent);
+document.getElementById("dump-state").addEventListener("click", dumpState);
