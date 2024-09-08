@@ -32,11 +32,7 @@ export function getExtrusionState(elem) {
 		let holesElem = sideElem.getElementsByClassName("designer-holes-editor")[0];
 		let slotHoles = [];
 		for (let holeElem of holesElem.getElementsByClassName("designer-hole")) {
-			let pxPos = parseInt(holeElem.getAttribute("data-pos"));
-			let pxWidth = holesElem.getBoundingClientRect().width.toFixed(0) - 2;
-			console.debug(pxWidth);
-			let mmPos = (pxPos / pxWidth) * extrusionLength;
-			slotHoles.push(mmPos.toFixed(1));
+			slotHoles.push(convertHolePosition(holeElem, holesElem, extrusionLength, 1));
 		}
 		
 		extrusionHoles[sideIndex][slotIndex] = slotHoles;
@@ -159,6 +155,13 @@ function addHole(pos, parent) {
 	setHoleDraggable(holeElem);
 }
 
+function convertHolePosition(holeElem, parentElem, extrusionLength, fractionDigits) {
+	let pxPos = parseInt(holeElem.getAttribute("data-pos"));
+	let pxWidth = parentElem.getBoundingClientRect().width.toFixed(0) - 2;
+	let mmPos = (pxPos / pxWidth) * extrusionLength;
+	return mmPos.toFixed(fractionDigits || 0)
+}
+
 //
 // UI Events
 //
@@ -243,9 +246,9 @@ function setHoleDraggable(elem) {
 	}
 	
 	/**
-	 * @param e {MouseEvent}
+	 * @param _e {MouseEvent}
 	 */
-	function dragMouseUp(e) {
+	function dragMouseUp(_e) {
 		document.onmousemove = null;
 		document.onmouseup = null;
 	}

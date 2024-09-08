@@ -22,7 +22,7 @@ const laborAdj = 150/60;
 /**
  * @param {string} type
  * @param {int} length
- * @param {{side1: [int], side2: [int]}} holes
+ * @param {{string: {string: [int]}}} holes
  * @returns {number}
  */
 export function calcExtrusionCost(type, length, holes) {
@@ -32,6 +32,13 @@ export function calcExtrusionCost(type, length, holes) {
 		console.warn(`Unknown extrusion type in calcExtrusion: ${type}`);
 		return 0;
 	}
-	const numHoles = (holes.side1?.length || 0) + (holes.side2?.length || 0);
-	return (rateEntry.rate * length) + (numHoles * rateEntry.labor * laborAdj);
+	let numHoles = 0;
+	console.debug(Object.values(holes));
+	for (let side of Object.values(holes)) {
+		numHoles += Object.values(side).map((slot) => Object.values(slot).length).reduce((a, b) => a + b, 0);
+	}
+	console.debug(`Calc extrusion cost: length=${length}, numHoles=${numHoles}, rate=${rateEntry.rate}, labor=${rateEntry.labor}`);
+	const cost = (rateEntry.rate * length) + (numHoles * rateEntry.labor * laborAdj);
+	console.debug(`  Result cost = ${cost}`);
+	return cost;
 }
