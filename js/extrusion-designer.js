@@ -138,6 +138,11 @@ function setHoleEditorType(editorLayout) {
 //
 
 /**
+ * @type {HTMLElement|undefined}
+ */
+let selectedHole = undefined;
+
+/**
  * @param pos {number}
  * @param parent {HTMLElement|undefined}
  */
@@ -148,17 +153,64 @@ function addHole(pos, parent) {
 	
 	let holeElem = document.createElement("i");
 	holeElem.className = "designer-hole";
-	holeElem.style.left = `${pos}px`;
-	holeElem.setAttribute("data-pos", pos.toString());
+	let labelElem = holeElem.appendChild(document.createElement("span"));
+	labelElem.className = "hole-label";
+	updateHole(holeElem, parent, pos);
 	
 	parent.appendChild(holeElem);
 	setHoleDraggable(holeElem);
+	setHoleClickable(holeElem);
+}
+
+/**
+ * @param holeElem {HTMLElement}
+ * @param parentElem {HTMLElement}
+ * @param pos {number?}
+ */
+function updateHole(holeElem, parentElem, pos) {
+	if (pos != null) {
+		holeElem.style.left = `${pos}px`;
+		holeElem.setAttribute("data-pos", pos.toString());
+	}
+	
+	let mmPos = convertHolePosition(holeElem, parentElem, getExtrusionLength(parentElem), 0);
+	holeElem.getElementsByClassName("hole-label")[0].textContent = mmPos || "?";
+}
+
+function selectHole(elem) {
+	// Clear existing selection
+	if (selectedHole != null) {
+		selectedHole.classList.remove("selected");
+	}
+	// Deselect and return if the element is already selected
+	if (elem?.classList.contains("selected")) {
+		selectedHole.classList.remove("selected");
+		return;
+	}
+	selectedHole = elem;
+	// Mark new selection
+	if (selectedHole != null) {
+		selectedHole.classList.add("selected");
+	}
+}
+
+function deleteSelectedHole() {
+	if (selectedHole != null) {
+		selectedHole.remove();
+	}
+}
+
+function getExtrusionLength(childElem) {
+	return childElem.closest(".extrusion-designer").getElementsByClassName("designer-width-input")[0].valueAsNumber;
 }
 
 function convertHolePosition(holeElem, parentElem, extrusionLength, fractionDigits) {
 	let pxPos = parseInt(holeElem.getAttribute("data-pos"));
 	let pxWidth = parentElem.getBoundingClientRect().width.toFixed(0) - 2;
 	let mmPos = (pxPos / pxWidth) * extrusionLength;
+	if (isNaN(mmPos)) {
+		return null;
+	}
 	return mmPos.toFixed(fractionDigits || 0);
 }
 
@@ -178,6 +230,10 @@ function initEvents(parentElem) {
 	for (let elem of parentElem.getElementsByClassName("reset-frame-button")) {
 		elem.addEventListener("click", resetFrameEvent);
 	}
+	// Length
+	parentElem.getElementsByClassName("designer-width-input")[0].addEventListener("change", extrusionLengthChange);
+	// Hole deselection
+	document.addEventListener("keydown", deselectHoleKeypress)
 }
 
 // Controls
@@ -193,6 +249,21 @@ function selectExtrusionChange(event) {
 	setExtrusionType(selectedType);
 }
 
+/**
+ * @param event {Event}
+ */
+function extrusionLengthChange(event) {
+	const newLength = event.target.valueAsNumber;
+	console.debug(`Extrusion length change: ${newLength} mm`);
+	
+	const editorElem = document.getElementById("extrusion_designer_sides");
+	for (const slotElem of editorElem.getElementsByClassName("designer-holes-editor")) {
+		for (let holeElem of slotElem.getElementsByClassName("designer-hole")) {
+			updateHole(holeElem, slotElem);
+		}
+	}
+}
+
 // Holes
 
 /**
@@ -205,6 +276,7 @@ function setHoleEditorClickable(elem) {
 	 * @param e {MouseEvent}
 	 */
 	function editorMouseDown(e) {
+		console.debug("Editor mouse down");
 		e.preventDefault();
 		e.stopPropagation();
 		
@@ -218,6 +290,34 @@ function setHoleEditorClickable(elem) {
 		let relativePos = e.clientX - bounds.left;
 		let newPos = Math.round(clampPosition(relativePos, bounds));
 		addHole(newPos, parentContainer);
+		selectHole();
+	}
+}
+
+/**
+ * @param elem {HTMLElement}
+ */
+function setHoleClickable(elem) {
+	elem.onclick = holeClick;
+	elem.ondblclick = holeDoubleClick;
+	
+	/**
+	 * @param e {MouseEvent}
+	 */
+	function holeClick(e) {
+		console.debug("Hole click");
+		e.preventDefault();
+		
+		selectHole(e.currentTarget);
+	}
+	
+	/**
+	 * @param e {MouseEvent}
+	 */
+	function holeDoubleClick(e) {
+		console.debug("Hole double click");
+		
+		// TODO
 	}
 }
 
@@ -264,13 +364,19 @@ function setHoleDraggable(elem) {
 			return;
 		}
 		
-		let bounds = parentContainer.getBoundingClientRect();
+		const bounds = parentContainer.getBoundingClientRect();
 		let relativePos = e.clientX - bounds.left;
 		let newPos = Math.round(clampPosition(relativePos, bounds));
-		//console.debug(`${newPos} [${e.clientX} -> ${relativePos}]`);
-		
-		elem.style.left = `${newPos}px`;
-		elem.setAttribute("data-pos", newPos.toString());
+		updateHole(elem, parentContainer, newPos);
+	}
+}
+
+/**
+ * @param e {KeyboardEvent}
+ */
+function deselectHoleKeypress(e) {
+	if (e.key === "Escape") {
+		selectHole();
 	}
 }
 
