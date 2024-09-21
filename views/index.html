@@ -76,7 +76,14 @@
         </div>
         
         <div id="cart" class="app-section">
-          <h2>Frame Cart</h2>
+          <div class="frame-cart-header">
+            <span class="header-label">Frame Cart</span>
+            <div class="frame-cart-controls">
+              <input type="file" id="frame-import-input" hidden />
+              <button id="frame-import" onclick="document.getElementById('frame-import-input').click();">Import</button>
+              <button id="frame-export">Export</button>
+            </div>
+          </div>
           <div class="frame-cart">
             <div class="frame-cart-header row">
               <span class="col col-0"></span>

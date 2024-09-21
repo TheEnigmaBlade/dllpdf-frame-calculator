@@ -11,9 +11,9 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^5.4.1",
+    "vite": "^5.4.5",
     "vite-plugin-html": "^3.2.2",
-    "lightningcss": "^1.25.1",
+    "lightningcss": "^1.27.0",
     "ejs": "^3.1.10"
   }
 }

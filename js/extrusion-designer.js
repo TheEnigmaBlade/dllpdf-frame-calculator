@@ -177,15 +177,19 @@ function updateHole(holeElem, parentElem, pos) {
 	holeElem.getElementsByClassName("hole-label")[0].textContent = mmPos || "?";
 }
 
+/**
+ * @param elem {HTMLElement?}
+ */
 function selectHole(elem) {
-	// Clear existing selection
-	if (selectedHole != null) {
-		selectedHole.classList.remove("selected");
-	}
-	// Deselect and return if the element is already selected
+	// Deselect and return if the element is already selected.
+	// This condition must be first, otherwise the other validations will override this check.
 	if (elem?.classList.contains("selected")) {
 		selectedHole.classList.remove("selected");
 		return;
+	}
+	// Clear existing selection
+	if (selectedHole != null) {
+		selectedHole.classList.remove("selected");
 	}
 	selectedHole = elem;
 	// Mark new selection
@@ -197,6 +201,7 @@ function selectHole(elem) {
 function deleteSelectedHole() {
 	if (selectedHole != null) {
 		selectedHole.remove();
+		selectedHole = null;
 	}
 }
 
@@ -233,7 +238,8 @@ function initEvents(parentElem) {
 	// Length
 	parentElem.getElementsByClassName("designer-width-input")[0].addEventListener("change", extrusionLengthChange);
 	// Hole deselection
-	document.addEventListener("keydown", deselectHoleKeypress)
+	document.addEventListener("keydown", deselectHoleKeypress);
+	document.addEventListener("mousedown", deselectHoleMousepress);
 }
 
 // Controls
@@ -286,6 +292,12 @@ function setHoleEditorClickable(elem) {
 		}
 		
 		let parentContainer = e.target.closest(".designer-holes-editor");
+		// With elements outside the editor area but part of the editor, the parent container will be null.
+		// Ignore these presses.
+		if (parentContainer == null) {
+			return;
+		}
+		
 		let bounds = parentContainer.getBoundingClientRect();
 		let relativePos = e.clientX - bounds.left;
 		let newPos = Math.round(clampPosition(relativePos, bounds));
@@ -316,6 +328,7 @@ function setHoleClickable(elem) {
 	 */
 	function holeDoubleClick(e) {
 		console.debug("Hole double click");
+		e.preventDefault();
 		
 		// TODO
 	}
@@ -376,6 +389,21 @@ function setHoleDraggable(elem) {
  */
 function deselectHoleKeypress(e) {
 	if (e.key === "Escape") {
+		console.log("Escape key pressed");
+		selectHole();
+	}
+	if (e.key === "Delete") {
+		console.log("Delete key pressed");
+		deleteSelectedHole();
+	}
+}
+
+/**
+ * @param e {MouseEvent}
+ */
+function deselectHoleMousepress(e) {
+	console.debug("Global mouse pressed");
+	if (e.button === 0) {
 		selectHole();
 	}
 }
@@ -384,8 +412,17 @@ function clampPosition(pos, bounds) {
 	return Math.max(0, Math.min(bounds.width - 2, pos));
 }
 
-function resetFrameEvent() {
+/**
+ * @param event {Event}
+ */
+function resetFrameEvent(event) {
 	console.debug("Reset frame event");
-	
+	const designerElement = event.target.closest(".extrusion-designer");
+	for (let elem of designerElement.getElementsByClassName("designer-width-input")) {
+		elem.value = null;
+	}
+	for (let elem of designerElement.getElementsByClassName("designer-holes-editor")) {
+		elem.innerHTML = "";
+	}
 }
 

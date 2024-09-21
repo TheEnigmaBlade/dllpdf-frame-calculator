@@ -1,6 +1,18 @@
 import {compile} from "ejs";
 import {calcExtrusionCost} from "./rates.js";
 
+/**
+ * @return {CartItem[]}
+ */
+export function exportCartState() {
+	let cartElem = document.getElementById("frame-cart");
+	let items = [];
+	for (let itemElem of cartElem.getElementsByClassName("frame-cart-item")) {
+		items.push(new CartItem(JSON.parse(itemElem.getAttribute("data-specs"))));
+	}
+	return items;
+}
+
 export class CartItem {
 	constructor(rawItem) {
 		/** @type string */
@@ -31,20 +43,6 @@ export class CartItem {
 		return this.unitCost * this.quantity;
 	}
 }
-
-// const cartItemTemplate = compile('\
-// 	<div class="frame-cart-item row" data-id="<%= item.id %>" data-specs="<%= data %>">\
-// 	  <span class="col col-0">\
-// 	  	<button class="cart-item-button delete-button"><img src="trash.svg" alt="Delete" width="18" height="18"/></button> \
-// 	  	<button class="cart-item-button edit-button"><img src="pencil.svg" alt="Edit" width="18" height="18"/></button>\
-// 	  </span> \
-// 	  <span class="col col-1"><input class="name-input" type="text" value="<%= item.name %>" /></span>\
-// 	  <span class="col col-2"><%= item.type %></span>\
-// 	  <span class="col col-3"><%= item.length %> mm</span>\
-// 	  <span class="col col-4"></span>\
-// 	  <span class="col col-5"><input class="quantity-input" type="number" min="1" max="99" value="<%= item.quantity %>"/></span>\
-// 	  <span class="col col-6"></span>\
-// 	</div>');
 
 import cartItemTemplateRaw from "/views/frame_cart_item.ejs?raw";
 const cartItemTemplate = compile(cartItemTemplateRaw);
