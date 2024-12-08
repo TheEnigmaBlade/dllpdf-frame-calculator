@@ -91,16 +91,20 @@ function refreshCart() {
 	
 	// Calculate cart total
 	const cartElem = document.getElementById("frame-cart");
-	let cartTotal = 0;
+	let cartCost = 0;
+	let cartCount = 0;
 	for (let itemElem of cartElem.getElementsByClassName("frame-cart-item")) {
 		let data = new CartItem(JSON.parse(itemElem.getAttribute("data-specs")));
-		cartTotal += data.totalCost;
+		cartCost += data.totalCost;
+		cartCount += data.quantity;
 	}
-	console.debug(`  cartTotal = ${cartTotal}`);
+	console.debug(`  cartTotal = ${cartCost}`);
 	
 	// Update cart total element
-	const totalElem = document.getElementById("frame-cart-total");
-	totalElem.textContent = cartTotal.toLocaleString("en-EN", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+	const costElem = document.getElementById("frame-cart-cost");
+	const countElem = document.getElementById("frame-cart-count");
+	costElem.textContent = cartCost.toLocaleString("en-EN", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+	countElem.textContent = cartCount.toLocaleString("en-EN");
 }
 
 // UI events

@@ -105,6 +105,12 @@ header {
     margin-bottom: 0.5em;
   }
   
+  .disclaimer {
+    font-style: italic;
+    font-size: 0.8em;
+    color: #878787;
+  }
+  
   .designer-width {
     text-align: center;
     
@@ -463,21 +469,31 @@ header {
   }
   
   .frame-cart-footer {
-    margin: 0.4em 2em;
+    margin: 1em 2em 0.4em 2em;
     text-align: right;
     
     .frame-cart-total {
       font-size: 1.1em;
       
-      .total::before {
+      .total-cost::before {
         content: "$";
       }
     }
     
     .total-label {
       font-weight: bold;
-      margin-right: 2em;
+      margin-right: 3em;
     }
+    
+    .total-count {
+      margin-right: 4em;
+    }
+  }
+  
+  .disclaimer {
+    font-style: italic;
+    font-size: 0.9em;
+    color: #878787;
   }
 }
 
