@@ -127,7 +127,7 @@ function editItemEvent(event) {
 	event.preventDefault();
 	
 	let elem = event.target.closest(".frame-cart-item");
-	// TODO
+	// TODO: implement editing extrusion in cart
 	
 	refreshCart();
 }
