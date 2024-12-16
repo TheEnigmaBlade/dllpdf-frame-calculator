@@ -118,13 +118,12 @@
           </div>
         </div>
         
-        <% if (isDev) { %>
-        <div class="app-section">
+        
+        <div class="app-section" <% if (!isDev) { %> style="display:none" <% } %> >
           <button id="dump-state">Dump designer state</button>
           <br/>
           <textarea id="dev-state" readonly></textarea>
         </div>
-        <% } %>
       </div>
     </div>
     <script type="module" src="/js/main.js"></script>

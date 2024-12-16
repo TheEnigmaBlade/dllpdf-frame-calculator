@@ -98,9 +98,7 @@ function exportFrame(_event) {
 	console.debug("Export frame event");
 	const exportContents = exportCsv();
 	let devElem = document.getElementById("dev-state");
-	if (devElem) {
-		devElem.value = exportContents;
-	}
+	devElem.value = exportContents;
 	const now = new Date();
 	
 	let element = document.createElement("a");
