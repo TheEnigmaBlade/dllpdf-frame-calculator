@@ -62,7 +62,7 @@
             <div class="designer-top">
               <span class="designer-width">
                 <label class="designer-width-middle">
-                  <input type="number" placeholder="Length" min="0" step="10" class="designer-width-input"/>
+                  <input type="number" placeholder="Length" min="0" step="10" class="designer-width-input" value="100"/>
                   mm
                 </label>
               </span>
@@ -71,6 +71,11 @@
             <%# Hole creation %>
             <div class="designer-bottom" id="extrusion_designer_sides">
               <%# Filled dynamically %>
+            </div>
+            <div class="designer-footer">
+              <button class="add-holes-button left" name="blind-joint-left">Add blind joint</button>
+              <span class="disclaimer">Extrusion display is not to scale</span>
+              <button class="add-holes-button right" name="blind-joint-right">Add blind joint</button>
             </div>
           </div>
         </div>
@@ -113,11 +118,13 @@
           </div>
         </div>
         
+        <% if (isDev) { %>
         <div class="app-section">
           <button id="dump-state">Dump designer state</button>
           <br/>
           <textarea id="dev-state" readonly></textarea>
         </div>
+        <% } %>
       </div>
     </div>
     <script type="module" src="/js/main.js"></script>

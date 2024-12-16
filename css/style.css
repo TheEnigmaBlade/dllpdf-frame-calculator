@@ -263,8 +263,10 @@ header {
   }
   
   .designer-type-display {
-    width: 10em;
-    height: 10em;
+    width: 11em;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   .extrusion-cross-section svg {
@@ -287,6 +289,18 @@ header {
       width: 100%;
     }
   }
+  
+  .add-holes-button {
+    font-size: 0.9em;
+  }
+  
+  .add-holes-button.left {
+    float: left;
+  }
+  
+  .add-holes-button.right {
+    float: right;
+  }
 }
 
 .designer-holes-editor {
@@ -299,7 +313,7 @@ header {
   z-index: 1;
   
   cursor: copy;
-  overflow: hidden;
+  overflow: visible;
   
   .designer-hole {
     width: 0.6em;
@@ -310,6 +324,9 @@ header {
     border-left: 2px dotted darkblue;
     
     cursor: col-resize;
+    
+    font-size: 0.9em;
+    font-style: normal;
     
     &::before {
       content: "";
@@ -330,15 +347,51 @@ header {
       box-shadow: 0 0 1px 3px #646cff;
     }
     
+    &::after {
+      display: block;
+      position: absolute;
+      top: 0.2em;
+      left: -0.72em;
+    }
+    
+    &[data-type^="blind-"]::after {
+      content: "🔒";
+    }
+    &.editing::after {
+      content: "✏️";
+    }
+    
+    
     .hole-label {
       display: inline-block;
       width: 22px;
       position: relative;
-      left: -0.8em;
-      top: 0.15em;
+      left: -0.9em;
+      bottom: -3.5em;
+    }
+    
+    .hole-controls {
+      display: none;
+      line-height: 0.9em;
+      width: 5em;
       
-      font-size: 0.9em;
-      font-style: normal;
+      position: absolute;
+      left: -2em;
+      bottom: -2em;
+      
+      input {
+        width: 100%;
+        text-align: center;
+      }
+    }
+    
+    &.editing {
+      .hole-label {
+        display: none;
+      }
+      .hole-controls {
+        display: inline-block;
+      }
     }
   }
 }

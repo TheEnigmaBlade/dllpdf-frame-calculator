@@ -1,4 +1,8 @@
-<div class="designer-side <% if(slotIndex === 0) { %>extrusion-slot-first <% } if(slotIndex === maxSlots-1) { %>extrusion-slot-last <% } %>" data-side="<%= sideIndex %>" data-slot="<%= slotIndex %>">
+<%# Hole editor %>
+<div class="designer-side <% if(slotIndex === 0) { %>extrusion-slot-first <% } if(slotIndex === maxSlots-1) { %>extrusion-slot-last <% } %>"
+     data-side="<%= sideIndex %>"
+     data-slot="<%= slotIndex %>"
+     data-extrusion-size="<%= extrusionSize %>">
   <span class="extrusion-slot-label"><%= slotLabel %></span>
   <span class="extrusion-side">
     <span class="designer-type-label"></span>

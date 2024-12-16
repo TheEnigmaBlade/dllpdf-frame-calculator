@@ -1,4 +1,7 @@
+import * as process from "node:process";
 import {createHtmlPlugin} from "vite-plugin-html";
+import browserslist from "browserslist";
+import {browserslistToTargets} from 'lightningcss';
 
 /** @type {import('vite').UserConfig} */
 export default {
@@ -7,7 +10,10 @@ export default {
 		"cssMinify": "lightningcss"
 	},
 	"css": {
-		"transformer": "lightningcss"
+		"transformer": "lightningcss",
+		"lightningcss": {
+			"targets": browserslistToTargets(browserslist(">= 0.5% in US, last 2 versions, Firefox ESR, not dead"))
+		}
 	},
 	"plugins": [
 		createHtmlPlugin({
@@ -15,7 +21,7 @@ export default {
 			template: "views/index.html",
 			inject: {
 				data: {
-					isDev: true,
+					isDev: process.env.NODE_ENV === "development",
 				}
 			}
 		})

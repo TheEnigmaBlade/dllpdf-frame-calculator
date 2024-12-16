@@ -32,7 +32,7 @@ export function getExtrusionState(elem) {
 		let holesElem = sideElem.getElementsByClassName("designer-holes-editor")[0];
 		let slotHoles = [];
 		for (let holeElem of holesElem.getElementsByClassName("designer-hole")) {
-			slotHoles.push(convertHolePosition(holeElem, holesElem, extrusionLength, 1));
+			slotHoles.push(getHolePositionMM(holeElem).toFixed(1));
 		}
 		
 		extrusionHoles[sideIndex][slotIndex] = slotHoles;
@@ -75,19 +75,22 @@ function setExtrusionType(type) {
 	// Update hole editor
 	switch (type) {
 		case ExtrusionTypes.DLLPDF1515:
+			setHoleEditorType([1, 1], 15);
+			break;
 		case ExtrusionTypes.DLLPDF2020:
 		case ExtrusionTypes.MISUMI2020:
-			setHoleEditorType([1, 1]);
+			setHoleEditorType([1, 1], 20);
 			break;
 			
 		case ExtrusionTypes.DLLPDF153030:
+			setHoleEditorType([2, 2], 15);
 		case ExtrusionTypes.MISUMI4040:
 		case ExtrusionTypes.MISUMI404020:
-			setHoleEditorType([2, 2]);
+			setHoleEditorType([2, 2], 20);
 			break;
 		
 		case ExtrusionTypes.MISUMI2040:
-			setHoleEditorType([2, 1]);
+			setHoleEditorType([2, 1], 20);
 			break;
 			
 		default: console.error(`Unknown extrusion type ${type}`);
@@ -105,8 +108,9 @@ const editorTemplate = compile(editorTemplateRaw);
 
 /**
  * @param {number[]} editorLayout	Array of sides, where the value is the number of slots in that side.
+ * @param extrusionSize {int}
  */
-function setHoleEditorType(editorLayout) {
+function setHoleEditorType(editorLayout, extrusionSize) {
 	console.debug(`Setting editor layout: ${editorLayout}`);
 	
 	// Clear parent
@@ -123,6 +127,7 @@ function setHoleEditorType(editorLayout) {
 				maxSlots: slotCount,
 				slotIndex: slotIndex,
 				slotLabel: slotLabel,
+				extrusionSize: extrusionSize,
 			});
 			
 			elem = parent.appendChild(elem.children[0]);
@@ -142,54 +147,118 @@ function setHoleEditorType(editorLayout) {
  */
 let selectedHole = undefined;
 
+import holeTemplateRaw from "/views/hole.ejs?raw";
+const holeTemplate = compile(holeTemplateRaw);
+
 /**
- * @param pos {number}
  * @param parent {HTMLElement|undefined}
+ * @param [opt] {Object}
+ * @param [opt.mmPos] {number}
+ * @param [opt.pxPos] {number}
+ * @param [opt.type] {string}
  */
-function addHole(pos, parent) {
+function addHole(parent, opt = {}) {
+	if (!opt.hasOwnProperty("mmPos") && !opt.hasOwnProperty("pxPos")) {
+		console.error("Missing position parameter: mmPos or pxPos must be specified in opt");
+	}
+	
 	if (parent == null) {
 		parent = document.getElementById("designer_holes_editor");
 	}
+	console.debug(`Adding hole to parent ${parent.className} with options: ${JSON.stringify(opt, null, 2)}`);
 	
-	let holeElem = document.createElement("i");
-	holeElem.className = "designer-hole";
-	let labelElem = holeElem.appendChild(document.createElement("span"));
-	labelElem.className = "hole-label";
-	updateHole(holeElem, parent, pos);
-	
+	let holeElem = document.createElement("div");
+	holeElem.innerHTML = holeTemplate({});
+	holeElem = parent.appendChild(holeElem.children[0]);
 	parent.appendChild(holeElem);
+	
+	updateHole(holeElem, parent, opt);
 	setHoleDraggable(holeElem);
 	setHoleClickable(holeElem);
+	setHoleEditable(holeElem);
 }
 
 /**
  * @param holeElem {HTMLElement}
  * @param parentElem {HTMLElement}
- * @param pos {number?}
+ * @param [opt] {Object}
+ * @param [opt.mmPos] {number}
+ * @param [opt.pxPos] {number}
+ * @param [opt.type] {string}
  */
-function updateHole(holeElem, parentElem, pos) {
-	if (pos != null) {
-		holeElem.style.left = `${pos}px`;
-		holeElem.setAttribute("data-pos", pos.toString());
+function updateHole(holeElem, parentElem, opt) {
+	// Validate options
+	if (opt && opt.hasOwnProperty("mmPos") && opt.hasOwnProperty("pxPos")) {
+		console.warn("Both mmPos and pxPos are specified in opt. Ignoring pxPos.");
+		delete opt.pxPos;
 	}
 	
-	let mmPos = convertHolePosition(holeElem, parentElem, getExtrusionLength(parentElem), 0);
+	// Set hole type
+	if (opt && opt.hasOwnProperty("type") && opt.type != null) {
+		holeElem.setAttribute("data-type", opt.type);
+	}
+	
+	// Update element positions based on provided position
+	if (opt && opt.hasOwnProperty("mmPos") && opt.mmPos != null) {
+		let mmPos = opt.mmPos.toFixed(2);
+		let pxPos = mmToPixels(opt.mmPos, parentElem).toFixed(0);
+		console.debug(`Updating hole position to ${mmPos}mm (${pxPos}px)`);
+		holeElem.setAttribute("data-pos", mmPos);
+		holeElem.style.left = `${pxPos}px`;
+		holeElem.setAttribute("data-pos-px", pxPos);
+	}
+	else if (opt && opt.hasOwnProperty("pxPos") && opt.pxPos != null) {
+		let mmPos = pixelsToMm(opt.pxPos, parentElem);
+		let pxPos = mmToPixels(mmPos, parentElem).toFixed(0);
+		mmPos = mmPos.toFixed(2);
+		console.debug(`Updating hole position to ${pxPos}px (${mmPos}mm)`);
+		holeElem.setAttribute("data-pos", mmPos.toString());
+		holeElem.style.left = `${pxPos}px`;
+		holeElem.setAttribute("data-pos-px", pxPos);
+	}
+	// Update element positions based on existing positions.
+	// No new position was specified, so the extrusion length was probably changed.
+	else {
+		let mmPos = getHolePositionMM(holeElem);
+		let holeType = holeElem.getAttribute("data-type");
+		switch (holeType) {
+			case "blind-right":
+				const sideElem = parentElem.closest(".designer-side");
+				const extrusionSize = parseInt(sideElem.getAttribute("data-extrusion-size"));
+				const extrusionLength = getExtrusionLength(parentElem);
+				mmPos = extrusionLength - (extrusionSize / 2);
+				break;
+		}
+		
+		let pxPos = mmToPixels(mmPos, parentElem).toFixed(0);
+		holeElem.setAttribute("data-pos", mmPos.toString());
+		holeElem.style.left = `${pxPos}px`;
+		holeElem.setAttribute("data-pos-px", pxPos);
+		
+		// TODO: clamp or remove holes if they go beyond the new maximum extrusion length
+	}
+		
+	// Always update the displayed position label
+	let mmPos = getHolePositionMM(holeElem).toFixed(1);
 	holeElem.getElementsByClassName("hole-label")[0].textContent = mmPos || "?";
+	holeElem.getElementsByClassName("hole-pos-input")[0].value = mmPos || 0;
 }
 
 /**
  * @param elem {HTMLElement?}
+ * @param force {boolean?}
  */
-function selectHole(elem) {
+function selectHole(elem, force) {
 	// Deselect and return if the element is already selected.
 	// This condition must be first, otherwise the other validations will override this check.
-	if (elem?.classList.contains("selected")) {
+	if (elem?.classList.contains("selected") && !force) {
 		selectedHole.classList.remove("selected");
 		return;
 	}
 	// Clear existing selection
 	if (selectedHole != null) {
 		selectedHole.classList.remove("selected");
+		selectedHole.classList.remove("editing");
 	}
 	selectedHole = elem;
 	// Mark new selection
@@ -209,14 +278,52 @@ function getExtrusionLength(childElem) {
 	return childElem.closest(".extrusion-designer").getElementsByClassName("designer-width-input")[0].valueAsNumber;
 }
 
-function convertHolePosition(holeElem, parentElem, extrusionLength, fractionDigits) {
-	let pxPos = parseInt(holeElem.getAttribute("data-pos"));
-	let pxWidth = parentElem.getBoundingClientRect().width.toFixed(0) - 2;
-	let mmPos = (pxPos / pxWidth) * extrusionLength;
-	if (isNaN(mmPos)) {
-		return null;
-	}
-	return mmPos.toFixed(fractionDigits || 0);
+/**
+ * Retrieves the position of a hole in millimeters from a given element's data attribute.
+ *
+ * @param {Element} holeElem Element representing the hole, containing a "data-pos" attribute with its position.
+ * @return {number} Position of the hole in millimeters.
+ */
+function getHolePositionMM(holeElem) {
+	return parseFloat(holeElem.getAttribute("data-pos"));
+}
+
+/**
+ * Calculates the position of a hole element in pixels relative to a specified parent element.
+ *
+ * @param {HTMLElement} holeElem HTML element representing the hole whose position is to be calculated.
+ * @return {Object} Position of the hole element in pixels.
+ */
+function getHolePositionPX(holeElem) {
+	return parseInt(holeElem.getAttribute("data-pos-px"));
+}
+
+/**
+ * Converts a real-world position in mm to pixel position for the UI.
+ * 
+ * @param mmPos {number} Real-world position in millimeters
+ * @param parentElem {HTMLElement} The parent container element
+ * @returns {number} Pixel position
+ */
+function mmToPixels(mmPos, parentElem) {
+	const extrusionLength = getExtrusionLength(parentElem);
+	const pxWidth = parentElem.getBoundingClientRect().width.toFixed(0) - 2;
+	let pxPos = (mmPos / extrusionLength) * pxWidth;
+	console.debug(`mmToPixels: mmPos= ${mmPos}, extrusionLength=${extrusionLength}, pxWidth=${pxWidth}) -> ${pxPos}`);
+	return pxPos;
+}
+
+/**
+ * Converts a pixel position to a real-world position in mm.
+ * 
+ * @param px {number} Pixel position
+ * @param parent {HTMLElement} Parent container element
+ * @returns {number} Real-world position in millimeters
+ */
+function pixelsToMm(px, parent) {
+	const extrusionLength = getExtrusionLength(parent);
+	const pxWidth = parent.getBoundingClientRect().width - 2;
+	return (px / pxWidth) * extrusionLength;
 }
 
 //
@@ -237,12 +344,18 @@ function initEvents(parentElem) {
 	}
 	// Length
 	parentElem.getElementsByClassName("designer-width-input")[0].addEventListener("change", extrusionLengthChange);
+	// Hole presets
+	for (let elem of parentElem.getElementsByClassName("add-holes-button")) {
+		elem.addEventListener("click", addHolePreset);
+	}
 	// Hole deselection
 	document.addEventListener("keydown", deselectHoleKeypress);
 	document.addEventListener("mousedown", deselectHoleMousepress);
 }
 
-// Controls
+//
+// - Controls
+//
 
 /**
  * @param event {Event}
@@ -270,7 +383,27 @@ function extrusionLengthChange(event) {
 	}
 }
 
-// Holes
+/**
+ * @param event {Event}
+ */
+function addHolePreset(event) {
+	console.debug(`Add hole preset clicked: ${event.target.name}`);
+	
+	switch (event.target.name) {
+		case "blind-joint-left":
+			addBlindJoint(0.5);
+			break;
+		case "blind-joint-right":
+			addBlindJoint(-0.5);
+			break;
+		default:
+			console.info(`Unknown hole preset "${event.target.name}`);
+	}
+}
+
+//
+// - Holes
+//
 
 /**
  * @param elem {HTMLElement}
@@ -301,7 +434,7 @@ function setHoleEditorClickable(elem) {
 		let bounds = parentContainer.getBoundingClientRect();
 		let relativePos = e.clientX - bounds.left;
 		let newPos = Math.round(clampPosition(relativePos, bounds));
-		addHole(newPos, parentContainer);
+		addHole(parentContainer, {pxPos: newPos});
 		selectHole();
 	}
 }
@@ -317,8 +450,20 @@ function setHoleClickable(elem) {
 	 * @param e {MouseEvent}
 	 */
 	function holeClick(e) {
-		console.debug("Hole click");
+		if (e.target.tagName === "INPUT") {
+			return;
+		}
 		e.preventDefault();
+		
+		// Ignore non-left click inputs
+		if (e.button !== 0) {
+			return;
+		}
+		// Prevent duplicate event on double+ click
+		if (e.detail > 1) {
+			return;
+		}
+		console.debug("Hole click");
 		
 		selectHole(e.currentTarget);
 	}
@@ -327,10 +472,16 @@ function setHoleClickable(elem) {
 	 * @param e {MouseEvent}
 	 */
 	function holeDoubleClick(e) {
-		console.debug("Hole double click");
 		e.preventDefault();
 		
-		// TODO
+		// Ignore non-left click inputs
+		if (e.button !== 0) {
+			return;
+		}
+		console.debug("Hole double click");
+		
+		selectHole(e.currentTarget, true);
+		e.currentTarget.classList.add("editing");
 	}
 }
 
@@ -346,6 +497,10 @@ function setHoleDraggable(elem) {
 	 * @param e {MouseEvent}
 	 */
 	function dragMouseDown(e) {
+		if (e.target.tagName === "INPUT") {
+			return;
+		}
+		
 		e.preventDefault();
 		e.stopPropagation();
 		
@@ -353,15 +508,22 @@ function setHoleDraggable(elem) {
 		if (e.button !== 0) {
 			return;
 		}
+		// console.debug("Drag mouse down");
 
 		document.onmouseup = dragMouseUp;
 		document.onmousemove = dragMouse;
 	}
 	
 	/**
-	 * @param _e {MouseEvent}
+	 * @param e {MouseEvent}
 	 */
-	function dragMouseUp(_e) {
+	function dragMouseUp(e) {
+		// Ignore non-left click inputs
+		if (e.button !== 0) {
+			return;
+		}
+		// console.debug("Drag mouse up");
+		
 		document.onmousemove = null;
 		document.onmouseup = null;
 	}
@@ -376,11 +538,56 @@ function setHoleDraggable(elem) {
 		if (e.button !== 0) {
 			return;
 		}
+		// console.debug("Drag mouse move");
 		
+		// Update hole position
 		const bounds = parentContainer.getBoundingClientRect();
 		let relativePos = e.clientX - bounds.left;
 		let newPos = Math.round(clampPosition(relativePos, bounds));
-		updateHole(elem, parentContainer, newPos);
+		updateHole(elem, parentContainer, {pxPos: newPos, type: ""});
+	}
+}
+
+/**
+ * @param elem {HTMLElement}
+ */
+function setHoleEditable(elem) {
+	const controlsElem = elem.querySelector(".hole-controls input");
+	
+	// Immediately stop propagation on basic click events to prevent the hole click events from capturing the event
+	controlsElem.addEventListener("mousedown", (e) => e.stopPropagation());
+	controlsElem.addEventListener("mouseup", (e) => e.stopPropagation());
+	controlsElem.addEventListener("click", (e) => e.stopPropagation());
+	controlsElem.addEventListener("dblclick", (e) => e.stopPropagation());
+	
+	controlsElem.addEventListener("focusout", holeEditCommit);
+	controlsElem.addEventListener("keypress", holeKeyCommit);
+	
+	function commitValue(elem) {
+		const newPos = parseFloat(elem.value);
+		console.debug(`New value: ${newPos}`);
+		const holeElem = elem.closest(".designer-hole");
+		
+		updateHole(holeElem, holeElem.closest(".designer-holes-editor"), {mmPos: newPos, type: ""});
+	}
+	
+	/**
+	 * @param e {FocusEvent}
+	 */
+	function holeEditCommit(e) {
+		console.debug("Hole edit commit");
+		commitValue(e.target);
+	}
+	
+	/**
+	 * @param e {KeyboardEvent}
+	 */
+	function holeKeyCommit(e) {
+		if (e.key === "Enter") {
+			console.debug("Hole edit commit (enter)");
+			e.target.blur();
+			selectHole();
+		}
 	}
 }
 
@@ -402,7 +609,7 @@ function deselectHoleKeypress(e) {
  * @param e {MouseEvent}
  */
 function deselectHoleMousepress(e) {
-	console.debug("Global mouse pressed");
+	console.debug("Global key pressed");
 	if (e.button === 0) {
 		selectHole();
 	}
@@ -426,3 +633,25 @@ function resetFrameEvent(event) {
 	}
 }
 
+/**
+ * @param offsetMultiplier {int} Positive = from left; negative = from right
+ */
+function addBlindJoint(offsetMultiplier) {
+	const designerElem = document.getElementById("extrusion_designer");
+	const extrusionLength = designerElem.getElementsByClassName("designer-width-input")[0].valueAsNumber;
+	
+	let rootElem = document.getElementById("extrusion_designer_sides");
+	for (let sideElem of rootElem.getElementsByClassName("designer-side")) {
+		const size = parseInt(sideElem.getAttribute("data-extrusion-size"));
+		console.debug(`Extrusion size=${size}`);
+		console.debug(`Offset multiplier=${offsetMultiplier}`);
+		let holePos = size * offsetMultiplier;
+		if (holePos < 0) {
+			holePos = extrusionLength + holePos;
+		}
+		console.debug(`Blind joint pos=${holePos}`);
+		
+		const sideEditorElem = sideElem.getElementsByClassName("designer-holes-editor")[0];
+		addHole(sideEditorElem, {mmPos: holePos, type: offsetMultiplier < 0 ? "blind-right" : "blind-left"})
+	}
+}
