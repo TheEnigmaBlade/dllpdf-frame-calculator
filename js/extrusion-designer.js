@@ -34,6 +34,7 @@ export function getExtrusionState(elem) {
 		for (let holeElem of holesElem.getElementsByClassName("designer-hole")) {
 			slotHoles.push(getHolePositionMM(holeElem).toFixed(1));
 		}
+		slotHoles.sort();
 		
 		extrusionHoles[sideIndex][slotIndex] = slotHoles;
 	}

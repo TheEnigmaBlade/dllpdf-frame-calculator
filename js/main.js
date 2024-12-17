@@ -1,8 +1,8 @@
 import "/css/reset.css";
 import "/css/style.css";
 
-import {initExtrusionEditor, getExtrusionState} from "./extrusion-designer.js";
-import {CartItem, addCartItem, exportCartState} from "./frame-cart.js";
+import {getExtrusionState, initExtrusionEditor} from "./extrusion-designer.js";
+import {addCartItem, CartItem, exportCartState} from "./frame-cart.js";
 
 //
 // Functionality
@@ -44,6 +44,20 @@ function exportCsv() {
 	let contents = "!Name,Type,Length,Holes,Quantity\n";
 	for (let item of exportCartState()) {
 		let holesStr = "";
+		// Check if the item has holes and process them if present
+		if (item.holes) {
+			// Process each side (outer keys)
+			const rows = Object.entries(item.holes).map(([sideKey, innerObj]) => {
+				// Process each row (inner keys)
+				return Object.entries(innerObj)
+					.map(([rowIndex, holesArray]) =>
+						`${sideKey}${rowIndex}=${holesArray.join('-')}`
+					)
+					.join(';'); // Join rows for a specific side with ;
+			});
+			// Join the rows for all sides with ;
+			holesStr = rows.join(';');
+		}
 		contents += `${item.name || ""},${item.type},${item.length},${holesStr},${item.quantity}\n`;
 	}
 	return contents;
@@ -112,10 +126,15 @@ function exportFrame(_event) {
 	document.body.removeChild(element);
 }
 
-function dumpState(_event) {
-	console.debug("Dumping state");
+function dumpDesignerState(_event) {
+	console.debug("Dumping designer state");
 	const designerState = getExtrusionState(document.getElementById("extrusion_designer"));
 	document.getElementById("dev-state").value = JSON.stringify(designerState, null, 2);
+}
+
+function dumpCartCsv(_event) {
+	console.debug("Dumping cart CSV");
+	document.getElementById("dev-state").value = exportCsv();
 }
 
 //
@@ -125,6 +144,7 @@ function dumpState(_event) {
 initExtrusionEditor(document.getElementById("extrusion_designer"));
 document.getElementById("add-frame").addEventListener("click", addFrameEvent);
 document.getElementById("add-copy-frame").addEventListener("click", addCopyFrameEvent);
-document.getElementById("dump-state").addEventListener("click", dumpState);
+document.getElementById("dump-state").addEventListener("click", dumpDesignerState);
+document.getElementById("dump-csv").addEventListener("click", dumpCartCsv);
 document.getElementById("frame-import-input").addEventListener("change", importFrame);
 document.getElementById("frame-export").addEventListener("click", exportFrame);

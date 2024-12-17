@@ -7,3 +7,4 @@
 - [x] Add hole presets
 - [ ] CSV export
 - [ ] CSV import
+- [x] Fix export not including holes
