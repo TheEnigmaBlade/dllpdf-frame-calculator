@@ -8,9 +8,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "ava"
   },
   "devDependencies": {
+    "ava": "^6.2.0",
     "browserslist": "^4.24.3",
     "ejs": "^3.1.10",
     "lightningcss": "^1.28.2",

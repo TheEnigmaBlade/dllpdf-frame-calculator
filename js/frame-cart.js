@@ -1,5 +1,7 @@
 import {compile} from "ejs";
-import {calcExtrusionCost} from "./rates.js";
+import cartItemTemplateRaw from "/views/frame_cart_item.ejs?raw";
+import {CartItem} from "./types.js";
+import {setExtrusionState} from "./extrusion-designer.js";
 
 /**
  * @return {CartItem[]}
@@ -13,57 +15,53 @@ export function exportCartState() {
 	return items;
 }
 
-export class CartItem {
-	constructor(rawItem) {
-		/** @type string */
-		this.id = rawItem.id || crypto.randomUUID();
-		/** @type string|undefined */
-		this.name = rawItem.name;
-		/** @type string */
-		this.type = rawItem.type;
-		/** @type int */
-		this.length = rawItem.length;
-		/** @type int */
-		this.quantity = rawItem.quantity || 1;
-		/** @type {{string: {string: [int]}}} */
-		this.holes = rawItem.holes;
+/**
+ * @param items {CartItem[]}
+ */
+export function importCartState(items) {
+	for (let itemData of items) {
+		addCartItem(itemData, false);
 	}
-	
-	/**
-	 * @returns {number}
-	 */
-	get unitCost() {
-		return calcExtrusionCost(this.type, this.length, this.holes);
-	}
-	
-	/**
-	 * @returns {number}
-	 */
-	get totalCost() {
-		return this.unitCost * this.quantity;
-	}
+	addCartItem(undefined, true);
 }
 
-import cartItemTemplateRaw from "/views/frame_cart_item.ejs?raw";
 const cartItemTemplate = compile(cartItemTemplateRaw);
 
 /**
  * @param itemData {CartItem}
+ * @param refresh {boolean}
  */
-export function addCartItem(itemData) {
-	// Create row element
-	let elem = document.createElement("div");
-	elem.innerHTML = cartItemTemplate({
-		item: itemData,
-		data: JSON.stringify(itemData),
-	});
-	elem = elem.children[0];
+export function addCartItem(itemData, refresh = true) {
+	// itemData is optional for the sole reason of allowing this function to be called to perform global cart updates
+	if (itemData) {
+		// Create row element
+		let elem = document.createElement("div");
+		elem.innerHTML = cartItemTemplate({
+			item: itemData,
+			data: JSON.stringify(itemData),
+		});
+		elem = elem.children[0];
+		
+		let cart = document.getElementById("frame-cart");
+		cart.appendChild(elem);
+		refreshItem(elem, itemData);
+		setItemEvents(elem);
+	}
 	
-	let cart = document.getElementById("frame-cart");
-	cart.appendChild(elem);
-	refreshItem(elem, itemData);
-	setItemEvents(elem);
+	if (refresh) {
+		refreshCart();
+	}
+}
+
+export function editCartItem(itemData) {
+	let cartElem = document.getElementById("frame-cart");
 	
+	// Find the existing item by matching data-specs
+	let itemElem = cartElem.querySelector(`.frame-cart-item[data-id="${itemData.id}"]`);
+	if (itemElem) {
+		itemElem.setAttribute("data-specs", JSON.stringify(itemData));
+		refreshItem(itemElem, itemData);
+	}
 	refreshCart();
 }
 
@@ -126,10 +124,12 @@ function editItemEvent(event) {
 	console.debug("Edit item event");
 	event.preventDefault();
 	
-	let elem = event.target.closest(".frame-cart-item");
-	// TODO: implement editing extrusion in cart
+	const elem = event.target.closest(".frame-cart-item");
+	const item = new CartItem(JSON.parse(elem.getAttribute("data-specs")));
+	setExtrusionState(item);
 	
-	refreshCart();
+	// Update UI
+	document.getElementById("save-edit").disabled = false;
 }
 
 /**

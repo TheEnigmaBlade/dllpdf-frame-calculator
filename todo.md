@@ -5,6 +5,6 @@
 - [x] Add display of hole position and controls
 - [x] Add ability to edit numerical value of hole
 - [x] Add hole presets
-- [ ] CSV export
-- [ ] CSV import
+- [x] CSV export
+- [x] CSV import
 - [x] Fix export not including holes

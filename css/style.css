@@ -241,9 +241,13 @@ header {
       height: 2.5em;
     }
     
-    .add-copy-frame-button {
+    .save-edit-button {
       flex-grow: 1;
       margin-right: 0.5em;
+      
+      &:hover {
+        border-color: limegreen;
+      }
     }
     
     .reset-frame-button {

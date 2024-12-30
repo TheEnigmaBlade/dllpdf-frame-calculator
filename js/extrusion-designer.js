@@ -13,10 +13,13 @@ export function initExtrusionEditor(elem) {
 	selectElem.dispatchEvent(new Event("change"));
 }
 
-/**
- * @param elem {HTMLElement}
- */
-export function getExtrusionState(elem) {
+export function getExtrusionState(onlyChanged = true) {
+	const elem = document.getElementById("extrusion_designer");
+	let prevState = {};
+	if (!onlyChanged) {
+		prevState = JSON.parse(elem.getAttribute("data-prev-state") || "{}");
+	}
+	
 	let extrusionType = elem.getElementsByClassName("extrusion-type-select")[0].value;
 	let extrusionLength = elem.getElementsByClassName("designer-width-input")[0].valueAsNumber;
 	
@@ -40,10 +43,50 @@ export function getExtrusionState(elem) {
 	}
 	
 	return {
+		...prevState,
 		type: extrusionType,
 		length: extrusionLength,
 		holes: extrusionHoles,
 	};
+}
+
+/**
+ * @param extrusionData {CartItem}
+ */
+export function setExtrusionState(extrusionData) {
+	const elem = document.getElementById("extrusion_designer");
+	elem.setAttribute("data-prev-state", JSON.stringify(extrusionData));
+	
+    // Set extrusion type
+    const extrusionTypeSelect = elem.getElementsByClassName("extrusion-type-select")[0];
+    extrusionTypeSelect.value = extrusionData.type;
+    extrusionTypeSelect.dispatchEvent(new Event("change"));
+
+    // Set extrusion length
+    const extrusionLengthInput = elem.getElementsByClassName("designer-width-input")[0];
+    extrusionLengthInput.value = extrusionData.length;
+    extrusionLengthInput.dispatchEvent(new Event("change"));
+
+    // Set holes
+    for (const [sideIndex, slots] of Object.entries(extrusionData.holes)) {
+        for (const [slotIndex, holePositions] of Object.entries(slots)) {
+			const sideElem = elem.querySelector(`.designer-side[data-side="${sideIndex}"][data-slot="${slotIndex}"]`);
+			
+			// If the side element is not found, log a warning and skip to the next iteration.
+			if (!sideElem) {
+				console.warn(`Side element not found for sideIndex=${sideIndex}, slotIndex=${slotIndex}. Skipping...`);
+				continue;
+			}
+        	
+            const slotElem = sideElem.querySelector(`.designer-holes-editor`);
+            
+            // Clear existing holes before setting new ones
+            slotElem.innerHTML = "";
+            holePositions.forEach(position => {
+                addHole(slotElem, { mmPos: parseFloat(position) });
+            });
+        }
+    }
 }
 
 //
@@ -164,7 +207,8 @@ function addHole(parent, opt = {}) {
 	}
 	
 	if (parent == null) {
-		parent = document.getElementById("designer_holes_editor");
+		console.error("Parent element not provided to addHole");
+		throw Error("Parent element not provided to addHole");
 	}
 	console.debug(`Adding hole to parent ${parent.className} with options: ${JSON.stringify(opt, null, 2)}`);
 	
@@ -626,12 +670,14 @@ function clampPosition(pos, bounds) {
 function resetFrameEvent(event) {
 	console.debug("Reset frame event");
 	const designerElement = event.target.closest(".extrusion-designer");
+	designerElement.setAttribute("data-prev-state", "");
 	for (let elem of designerElement.getElementsByClassName("designer-width-input")) {
 		elem.value = null;
 	}
 	for (let elem of designerElement.getElementsByClassName("designer-holes-editor")) {
 		elem.innerHTML = "";
 	}
+	document.getElementById("save-edit").disabled = true;
 }
 
 /**
