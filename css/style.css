@@ -462,13 +462,17 @@ header {
     }
     &.col-4 {
       flex-grow: 0;
-      width: 8em;
+      width: 5em;
     }
     &.col-5 {
       flex-grow: 0;
-      width: 5em;
+      width: 8em;
     }
     &.col-6 {
+      flex-grow: 0;
+      width: 5em;
+    }
+    &.col-7 {
       flex-grow: 0;
       width: 8em;
     }
@@ -491,14 +495,43 @@ header {
       border-right: 3px solid var(--background-color);
     }
     
-    .col-4, .col-6 {
+    .item-unit-cost, .item-total-cost {
       text-decoration: underline dotted #9197f6;
-    }
-    
-    .col-4, .col-6 {
+      
       &::before {
         content: "$";
         float: left;
+      }
+    }
+    
+    .item-holes {
+      position: relative;
+      
+      &:hover .item-holes-dialog {
+        display: block;
+      }
+    }
+    
+    .item-holes-dialog {
+      display: none;
+      position: absolute;
+      width: max-content;
+      max-width: 30em;
+      min-width: 10em;
+      
+      background-color: whitesmoke;
+      border: 1px solid #878787;
+      border-radius: 4px;
+      padding: 0.4em 0.8em;
+      z-index: 1;
+      
+      bottom: 1em;
+      left: 0;
+      
+      ul {
+        padding: 0;
+        list-style: none;
+        text-align: left;
       }
     }
     

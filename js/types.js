@@ -30,6 +30,12 @@ export class CartItem {
 		this.holes = rawItem.holes;
 	}
 	
+	get holeCount() {
+		return Object.values(this.holes).reduce((acc, innerObj) => {
+			return acc + Object.values(innerObj).reduce((innerAcc, arr) => innerAcc + arr.length, 0);
+		}, 0);
+	}
+	
 	/**
 	 * @returns {number}
 	 */

@@ -1,0 +1,7 @@
+<ul>
+<% for (const [sideKey, side] of Object.entries(holes)) { %>
+    <% for (const [slotKey, slot] of Object.entries(side)) { %>
+    <li><%= formatSideSlotKey(sideKey, slotKey) %>: <%= slot.join(", ") %></li>
+    <% } %>
+<% } %>
+</ul>

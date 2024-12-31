@@ -1,7 +1,11 @@
 import {compile} from "ejs";
-import cartItemTemplateRaw from "/views/frame_cart_item.ejs?raw";
 import {CartItem} from "./types.js";
 import {setExtrusionState} from "./extrusion-designer.js";
+
+import cartItemTemplateRaw from "/views/frame_cart_item.ejs?raw";
+import holePopupTemplateRaw from "/views/frame_cart_hole_popup.ejs?raw";
+const cartItemTemplate = compile(cartItemTemplateRaw);
+const holePopupTemplate = compile(holePopupTemplateRaw);
 
 /**
  * @return {CartItem[]}
@@ -25,7 +29,6 @@ export function importCartState(items) {
 	addCartItem(undefined, true);
 }
 
-const cartItemTemplate = compile(cartItemTemplateRaw);
 
 /**
  * @param itemData {CartItem}
@@ -35,17 +38,20 @@ export function addCartItem(itemData, refresh = true) {
 	// itemData is optional for the sole reason of allowing this function to be called to perform global cart updates
 	if (itemData) {
 		// Create row element
-		let elem = document.createElement("div");
-		elem.innerHTML = cartItemTemplate({
+		let itemElem = document.createElement("div");
+		itemElem.innerHTML = cartItemTemplate({
 			item: itemData,
 			data: JSON.stringify(itemData),
 		});
-		elem = elem.children[0];
+		itemElem = itemElem.children[0];
+		itemElem.querySelector(".item-holes-dialog").innerHTML = holePopupTemplate({ holes: itemData.holes, formatSideSlotKey });
 		
 		let cart = document.getElementById("frame-cart");
-		cart.appendChild(elem);
-		refreshItem(elem, itemData);
-		setItemEvents(elem);
+		cart.appendChild(itemElem);
+		
+		// Update money values
+		refreshItem(itemElem, itemData);
+		setItemEvents(itemElem);
 	}
 	
 	if (refresh) {
@@ -59,7 +65,17 @@ export function editCartItem(itemData) {
 	// Find the existing item by matching data-specs
 	let itemElem = cartElem.querySelector(`.frame-cart-item[data-id="${itemData.id}"]`);
 	if (itemElem) {
+		// Retrieve the quantity from the cart listing, as it may have been user-edited prior to saving
+		const oldData = JSON.parse(itemElem.getAttribute("data-specs"));
+		itemData.quantity = oldData.quantity;
+		
+		// Update cart UI with modified values
 		itemElem.setAttribute("data-specs", JSON.stringify(itemData));
+		itemElem.querySelector(".item-length").textContent = `${itemData.length} mm`;
+		itemElem.querySelector(".item-holes .value").textContent = `${itemData.holeCount}`;
+		itemElem.querySelector(".item-holes-dialog").innerHTML = holePopupTemplate({ holes: itemData.holes, formatSideSlotKey });
+
+		// Update money values
 		refreshItem(itemElem, itemData);
 	}
 	refreshCart();
@@ -80,8 +96,8 @@ function refreshItem(itemElem, itemData) {
 	console.debug(itemData);
 	console.debug(`  unitCost = ${itemData.unitCost}`);
 	console.debug(`  totalCost = ${itemData.totalCost}`);
-	itemElem.getElementsByClassName("col-4")[0].textContent = itemData.unitCost.toLocaleString("en-EN", {minimumFractionDigits: 2, maximumFractionDigits: 2});
-	itemElem.getElementsByClassName("col-6")[0].textContent = itemData.totalCost.toLocaleString("en-EN", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+	itemElem.querySelector(".item-unit-cost").textContent = formatMoney(itemData.unitCost);
+	itemElem.querySelector(".item-total-cost").textContent = formatMoney(itemData.totalCost);
 }
 
 function refreshCart() {
@@ -101,8 +117,8 @@ function refreshCart() {
 	// Update cart total element
 	const costElem = document.getElementById("frame-cart-cost");
 	const countElem = document.getElementById("frame-cart-count");
-	costElem.textContent = cartCost.toLocaleString("en-EN", {minimumFractionDigits: 2, maximumFractionDigits: 2});
-	countElem.textContent = cartCount.toLocaleString("en-EN");
+	costElem.textContent = formatMoney(cartCost);
+	countElem.textContent = cartCount.toString();
 }
 
 // UI events
@@ -166,4 +182,24 @@ function changeQuantityEvent(event) {
 	
 	elem.setAttribute("data-specs", JSON.stringify(data));
 	refreshCart();
+}
+
+// Misc. utilities
+
+/**
+ * @param money {number}
+ */
+function formatMoney(money) {
+	return money.toLocaleString("en-EN", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+/**
+ * @param side {string} Should be a single numeric digit, 0-9, as a string.
+ * @param slot {string} Should be a single numeric digit, 0-9, as a string.
+ * @returns {string}
+ */
+function formatSideSlotKey(side, slot) {
+	side = (parseInt(side) + 10).toString(36).toUpperCase();
+	slot = (parseInt(slot) + 1).toString();
+	return `${side}${slot}`;
 }
