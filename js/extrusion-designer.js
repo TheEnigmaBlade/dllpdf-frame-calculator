@@ -13,6 +13,11 @@ export function initExtrusionEditor(elem) {
 	selectElem.dispatchEvent(new Event("change"));
 }
 
+/**
+ * 
+ * @param onlyChanged
+ * @returns {DesignerState}
+ */
 export function getExtrusionState(onlyChanged = true) {
 	const elem = document.getElementById("extrusion_designer");
 	let prevState = {};
@@ -106,13 +111,55 @@ import csMisumi404020 from "/hfs5_404020-web.svg?raw";
 function setExtrusionType(type) {
 	// Update extrusion images
 	switch (type) {
-		case ExtrusionTypes.DLLPDF1515:   setTypeImages(csDllpdf1515); break;
-		case ExtrusionTypes.DLLPDF2020:   setTypeImages(csDllpdf2020); break;
-		case ExtrusionTypes.DLLPDF153030: setTypeImages(csDllpdf153030); break;
-		case ExtrusionTypes.MISUMI2040:   setTypeImages(csMisumi2040); break;
-		case ExtrusionTypes.MISUMI4040:   setTypeImages(csMisumi4040); break;
-		case ExtrusionTypes.MISUMI2020:   setTypeImages(csDllpdf2020); break;
-		case ExtrusionTypes.MISUMI404020: setTypeImages(csMisumi404020); break;
+		case ExtrusionTypes.DLLPDF1515:
+			setTypeImages(csDllpdf1515, [
+				{id: "A", x: 45.5, y: 9},
+				{id: "B", x: 92, y: 54.5},
+			], 15);
+			break;
+		case ExtrusionTypes.DLLPDF2020:
+			setTypeImages(csDllpdf2020, [
+				{id: "A", x: 12, y: 2},
+				{id: "B", x: 24.5, y: 14.5},
+			]);
+			break;
+		case ExtrusionTypes.DLLPDF153030:
+			setTypeImages(csDllpdf153030, [
+				{id: "A", x: 5.6, y: 1.2},
+				{id: "B", x: 18.8, y: 1.2},
+				{id: "C", x: 26, y: 7.8},
+				{id: "D", x: 26, y: 21},
+			], 3);
+			break;
+		case ExtrusionTypes.MISUMI2040:
+			setTypeImages(csMisumi2040, [
+				{id: "A", x: 12, y: 2},
+				{id: "B", x: 24.5, y: 14.5},
+				{id: "C", x: 24.5, y: 41},
+			]);
+			break;
+		case ExtrusionTypes.MISUMI4040:
+			setTypeImages(csMisumi4040, [
+				{id: "A", x: 21, y: 6},
+				{id: "B", x: 71, y: 6},
+				{id: "C", x: 95, y: 29},
+				{id: "D", x: 95, y: 79},
+			], 12);
+			break;
+		case ExtrusionTypes.MISUMI2020:
+			setTypeImages(csDllpdf2020, [
+				{id: "A", x: 12, y: 2},
+				{id: "B", x: 24.5, y: 14.5},
+			]);
+			break;
+		case ExtrusionTypes.MISUMI404020:
+			setTypeImages(csMisumi404020, [
+				{id: "A", x: 21, y: 5},
+				{id: "B", x: 71, y: 55},
+				{id: "C", x: 45, y: 29},
+				{id: "D", x: 95, y: 79},
+			], 12);
+			break;
 		default: console.error(`Unknown extrusion type ${type}`);
 	}
 	
@@ -134,17 +181,42 @@ function setExtrusionType(type) {
 			break;
 		
 		case ExtrusionTypes.MISUMI2040:
-			setHoleEditorType([2, 1], 20);
+			setHoleEditorType([1, 2], 20);
 			break;
 			
 		default: console.error(`Unknown extrusion type ${type}`);
 	}
 }
 
-function setTypeImages(extrusionImg) {
-	for (let elem of document.getElementsByClassName("extrusion-cross-section")) {
-		elem.innerHTML = extrusionImg; 
-	}
+function setTypeImages(extrusionImg, labels, fontSize = 4) {
+    for (let elem of document.getElementsByClassName("extrusion-cross-section")) {
+        let svgWrapper = document.createElement("div");
+        svgWrapper.innerHTML = extrusionImg;
+
+        // Get the SVG element
+        let svgElement = svgWrapper.querySelector("svg");
+        if (!svgElement) {
+            console.error("SVG not found in the provided extrusion image");
+            continue;
+        }
+
+        // Add labels dynamically
+        labels.forEach(label => {
+            let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", label.x);
+            text.setAttribute("y", label.y);
+			text.setAttribute("class", "label");
+			text.setAttribute("font-size", fontSize.toString());
+            text.textContent = label.id;
+
+            // Append text to the SVG
+            svgElement.appendChild(text);
+        });
+
+        // Replace the inner HTML of the cross-section with updated SVG
+        elem.innerHTML = "";
+        elem.appendChild(svgElement);
+    }
 }
 
 import editorTemplateRaw from "/views/hole_editor.ejs?raw";

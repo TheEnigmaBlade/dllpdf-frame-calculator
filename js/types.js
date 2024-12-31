@@ -1,5 +1,19 @@
 import {calcExtrusionCost} from "./rates.js";
 
+
+/**
+ * @typedef {Object} DesignerState
+ * @property {string} [id] - The unique identifier (UUID).
+ * @property {string} [name] - The name of the item, optional.
+ * @property {string} type - The type of the item.
+ * @property {number} length - The length of the item.
+ * @property {number} [quantity] - The quantity of the item.
+ * @property {Object<string, Object<string, Array<number>>>} holes - An object describing holes with nested structure.
+ */
+
+/**
+ * 
+ */
 export class CartItem {
 	constructor(rawItem) {
 		/** @type string */
