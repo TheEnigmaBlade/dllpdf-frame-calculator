@@ -115,7 +115,7 @@ function setExtrusionType(type) {
 			setTypeImages(csDllpdf1515, [
 				{id: "A", x: 45.5, y: 9},
 				{id: "B", x: 92, y: 54.5},
-			], 15);
+			], 13);
 			break;
 		case ExtrusionTypes.DLLPDF2020:
 			setTypeImages(csDllpdf2020, [
@@ -125,26 +125,26 @@ function setExtrusionType(type) {
 			break;
 		case ExtrusionTypes.DLLPDF153030:
 			setTypeImages(csDllpdf153030, [
-				{id: "A", x: 5.6, y: 1.2},
-				{id: "B", x: 18.8, y: 1.2},
-				{id: "C", x: 26, y: 7.8},
-				{id: "D", x: 26, y: 21},
-			], 3);
+				{id: "A1", x: 5.6, y: 1.2},
+				{id: "A2", x: 18.8, y: 1.2},
+				{id: "B1", x: 25, y: 7.2},
+				{id: "B2", x: 25, y: 20.5},
+			], 2);
 			break;
 		case ExtrusionTypes.MISUMI2040:
 			setTypeImages(csMisumi2040, [
 				{id: "A", x: 12, y: 2},
-				{id: "B", x: 24.5, y: 14.5},
-				{id: "C", x: 24.5, y: 41},
+				{id: "B1", x: 23.5, y: 14.5},
+				{id: "B2", x: 23.5, y: 41},
 			]);
 			break;
 		case ExtrusionTypes.MISUMI4040:
 			setTypeImages(csMisumi4040, [
-				{id: "A", x: 21, y: 6},
-				{id: "B", x: 71, y: 6},
-				{id: "C", x: 95, y: 29},
-				{id: "D", x: 95, y: 79},
-			], 12);
+				{id: "A1", x: 19, y: 5},
+				{id: "A2", x: 69, y: 5},
+				{id: "B1", x: 94, y: 29},
+				{id: "B2", x: 94, y: 79},
+			], 10);
 			break;
 		case ExtrusionTypes.MISUMI2020:
 			setTypeImages(csDllpdf2020, [
@@ -154,11 +154,11 @@ function setExtrusionType(type) {
 			break;
 		case ExtrusionTypes.MISUMI404020:
 			setTypeImages(csMisumi404020, [
-				{id: "A", x: 21, y: 5},
-				{id: "B", x: 71, y: 55},
-				{id: "C", x: 45, y: 29},
-				{id: "D", x: 95, y: 79},
-			], 12);
+				{id: "A1", x: 19, y: 5},
+				{id: "A2", x: 69, y: 55},
+				{id: "B1", x: 44, y: 29},
+				{id: "B2", x: 94, y: 79},
+			], 10);
 			break;
 		default: console.error(`Unknown extrusion type ${type}`);
 	}
@@ -188,7 +188,7 @@ function setExtrusionType(type) {
 	}
 }
 
-function setTypeImages(extrusionImg, labels, fontSize = 4) {
+function setTypeImages(extrusionImg, labels, fontSize = 3) {
     for (let elem of document.getElementsByClassName("extrusion-cross-section")) {
         let svgWrapper = document.createElement("div");
         svgWrapper.innerHTML = extrusionImg;
@@ -242,15 +242,14 @@ function setHoleEditorType(editorLayout, extrusionSize) {
 				sideIndex: sideIndex,
 				maxSlots: slotCount,
 				slotIndex: slotIndex,
-				slotLabel: slotLabel,
+				slotLabel: slotCount > 1 ? `${slotLabel}${slotIndex + 1}` : slotLabel,
 				extrusionSize: extrusionSize,
 			});
 			
 			elem = parent.appendChild(elem.children[0]);
 			setHoleEditorClickable(elem);
-			
-			slotLabel = String.fromCharCode(slotLabel.charCodeAt(0) + 1);
 		}
+		slotLabel = String.fromCharCode(slotLabel.charCodeAt(0) + 1);
 	}
 }
 
