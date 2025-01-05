@@ -18,6 +18,8 @@
     "lightningcss": "^1.28.2",
     "vite": "^6.0.6",
     "vite-plugin-html": "^3.2.2",
+    "vite-plugin-singlefile": "^2.1.0",
+    "vite-svg-loader": "^5.1.0",
     "@rollup/plugin-image": "^3.0.3"
   }
 }

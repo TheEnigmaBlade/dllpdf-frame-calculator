@@ -1,5 +1,7 @@
 import {defineConfig} from "vite";
 import {createHtmlPlugin} from "vite-plugin-html";
+import {viteSingleFile} from "vite-plugin-singlefile"
+import svgLoader from 'vite-svg-loader';
 import browserslist from "browserslist";
 import {browserslistToTargets} from 'lightningcss';
 import {author, name, version} from "./package.json";
@@ -57,7 +59,7 @@ export default defineConfig(({mode}) => {
 		plugins: [
 			// vite-plugin-html
 			createHtmlPlugin({
-				minify: true,
+				minify: mode !== "development",
 				template: index,
 				inject: {
 					data: {
@@ -70,6 +72,8 @@ export default defineConfig(({mode}) => {
 				...image(),
 				enforce: "pre"
 			},
+			svgLoader(),
+			viteSingleFile(),
 		]
 	}
 });
