@@ -1,4 +1,3 @@
-import "/css/reset.css";
 import "/css/style.css";
 
 import {getExtrusionState, initExtrusionEditor} from "./extrusion-designer.js";

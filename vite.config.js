@@ -1,12 +1,15 @@
+import fs from "node:fs";
 import {defineConfig} from "vite";
 import {createHtmlPlugin} from "vite-plugin-html";
 import {viteSingleFile} from "vite-plugin-singlefile"
+//import image from '@rollup/plugin-image';
 import svgLoader from 'vite-svg-loader';
 import browserslist from "browserslist";
 import {browserslistToTargets} from 'lightningcss';
 import {author, name, version} from "./package.json";
 
-import image from '@rollup/plugin-image';
+const trashSvg = fs.readFileSync("images/icons/trash.svg", "utf8");
+const pencilSvg = fs.readFileSync("images/icons/pencil.svg", "utf8");
 
 /** @type {import('vite').UserConfig} */
 export default defineConfig(({mode}) => {
@@ -32,7 +35,9 @@ export default defineConfig(({mode}) => {
 			outDir: "dist",
 			assetsDir: "",
 			emptyOutDir: true,
+			copyPublicDir: mode !== "production",
 			
+			minify: mode === "pages",
 			assetsInlineLimit: 51200,
 			cssMinify: "lightningcss",
 			rollupOptions: {
@@ -59,19 +64,25 @@ export default defineConfig(({mode}) => {
 		plugins: [
 			// vite-plugin-html
 			createHtmlPlugin({
-				minify: mode !== "development",
+				minify: mode === "pages",
 				template: index,
 				inject: {
 					data: {
 						isDev: mode === "development",
+						isStandalone: mode === "development" || mode === "pages",
+						
+						icons: {
+							delete: trashSvg,
+							edit: pencilSvg
+						}
 					}
 				}
 			}),
 			// rollup/plugin-image
-			{
-				...image(),
-				enforce: "pre"
-			},
+			// {
+			// 	...image(),
+			// 	enforce: "pre"
+			// },
 			svgLoader(),
 			viteSingleFile(),
 		]

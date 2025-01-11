@@ -1,3 +1,4 @@
+<% if (isStandalone) { %>
 <!doctype html>
 <html lang="en">
   <head>
@@ -5,8 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <%# <link rel="icon" type="image/svg+xml" href="/dllpdf1515.svg" /> %>
     <title>DLLPDF Custom Frame Calculator</title>
+    
+    <%# Only included on standalone pages %>
+    <link rel="stylesheet" href="/css/reset.css" />
   </head>
-  <body>
+  <body class="frame-builder">
     <div class="page-content">
       <header>
         <a href="https://dllpdf.com/">
@@ -14,8 +18,9 @@
         </a>
         <span class="header-text">Custom Frame Calculator</span>
       </header>
+<% } %>
       
-      <div id="app">
+      <div id="app" class="frame-builder">
         
         <%# Extrusion designer %>
         <div class="app-section extrusion-designer" id="extrusion_designer">
@@ -127,7 +132,14 @@
           <textarea id="dev-state" readonly></textarea>
         </div>
       </div>
+      
+<% if (isStandalone) { %>
     </div>
+<% }%>
+
     <script type="module" src="/js/main.js"></script>
+
+<% if (isStandalone) { %>
   </body>
 </html>
+<% } %>

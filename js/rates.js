@@ -32,11 +32,12 @@ export function calcExtrusionCost(type, length, holes) {
 		console.warn(`Unknown extrusion type in calcExtrusion: ${type}`);
 		return 0;
 	}
+	// Count the total number of holes
 	let numHoles = 0;
-	console.debug(Object.values(holes));
 	for (let side of Object.values(holes)) {
 		numHoles += Object.values(side).map((slot) => Object.values(slot).length).reduce((a, b) => a + b, 0);
 	}
+	// Calculate cost
 	console.debug(`Calc extrusion cost: length=${length}, numHoles=${numHoles}, rate=${rateEntry.rate}, labor=${rateEntry.labor}`);
 	const cost = (rateEntry.rate * length) + (numHoles * rateEntry.labor * laborAdj);
 	console.debug(`  Result cost = ${cost}`);

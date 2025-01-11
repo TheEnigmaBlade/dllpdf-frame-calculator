@@ -2,6 +2,16 @@
 
 Custom frame calculator for [dllpdf.com](https://dllpdf.com/)
 
+## Setup
+
+Install [Node.js](https://nodejs.org/en/download). Choose the latest LTS version.
+
+Then install required dependencies:
+
+```bash
+npm install
+```
+
 ## Usage
 
 To start the development server:

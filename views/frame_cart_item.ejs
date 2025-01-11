@@ -1,7 +1,11 @@
 <div class="frame-cart-item row" data-id="<%= item.id %>" data-specs="<%= data %>">
   <span class="col col-0 item-controls">
-    <button class="cart-item-button delete-button"><img src="trash.svg" alt="Delete" width="18" height="18"/></button> 
-    <button class="cart-item-button edit-button"><img src="pencil.svg" alt="Edit" width="18" height="18"/></button>
+    <button class="cart-item-button delete-button">
+      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g id="_01_align_center" data-name="01 align center"><path d="M22,4H17V2a2,2,0,0,0-2-2H9A2,2,0,0,0,7,2V4H2V6H4V21a3,3,0,0,0,3,3H17a3,3,0,0,0,3-3V6h2ZM9,2h6V4H9Zm9,19a1,1,0,0,1-1,1H7a1,1,0,0,1-1-1V6H18Z"/><rect x="9" y="10" width="2" height="8"/><rect x="13" y="10" width="2" height="8"/></g></svg></span>
+    </button> 
+    <button class="cart-item-button edit-button">
+      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g id="_01_align_center" data-name="01 align center"><path d="M22.94,1.06a3.626,3.626,0,0,0-5.124,0L0,18.876V24H5.124L22.94,6.184A3.627,3.627,0,0,0,22.94,1.06ZM4.3,22H2V19.7L15.31,6.4l2.3,2.3ZM21.526,4.77,19.019,7.277l-2.295-2.3L19.23,2.474a1.624,1.624,0,0,1,2.3,2.3Z"/></g></svg></span>
+    </button>
   </span> 
   <span class="col col-1 item-name"><input class="name-input" type="text" value="<%= item.name %>" /></span>
   <span class="col col-2 item-type"><%= item.type %></span>

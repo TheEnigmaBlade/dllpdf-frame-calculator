@@ -98,12 +98,12 @@ export function setExtrusionState(extrusionData) {
 // Extrusion type setting
 //
 
-import csDllpdf1515 from "/public/extrusion-images/dllpdf1515-web.svg?raw";
-import csDllpdf2020 from "/public/extrusion-images/dllpdf2020-web.svg?raw";
-import csDllpdf153030 from "/public/extrusion-images/dllpdf153030-web.svg?raw";
-import csMisumi2040 from "/public/extrusion-images/dllpdf2040-web.svg?raw";
-import csMisumi4040 from "/public/extrusion-images/hfs5_4040-web.svg?raw";
-import csMisumi404020 from "/public/extrusion-images/hfs5_404020-web.svg?raw";
+import csDllpdf1515 from "/images/extrusions/dllpdf1515-web.svg?raw";
+import csDllpdf2020 from "/images/extrusions/dllpdf2020-web.svg?raw";
+import csDllpdf153030 from "/images/extrusions/dllpdf153030-web.svg?raw";
+import csMisumi2040 from "/images/extrusions/dllpdf2040-web.svg?raw";
+import csMisumi4040 from "/images/extrusions/hfs5_4040-web.svg?raw";
+import csMisumi404020 from "/images/extrusions/hfs5_404020-web.svg?raw";
 
 /**
  * @param {string} type

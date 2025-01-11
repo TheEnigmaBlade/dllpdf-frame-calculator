@@ -1,14 +1,14 @@
+/*
+ * For standalone builds
+ */
+
 :root {
   --background-color: white;
   
   color-scheme: normal;
 }
 
-a {
-  text-decoration: inherit;
-}
-
-body {
+body.frame-builder {
   display: flex;
   min-height: 100vh;
   
@@ -22,29 +22,6 @@ body {
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-}
-
-/* General */
-
-button {
-  border-radius: 4px;
-  border: 1px solid #6c6c6c;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  transition: border-color, background-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-
-.delete-button:hover {
-  border-color: red;
-}
-
-h2 {
-  margin-bottom: 1em;
 }
 
 /* Header */
@@ -68,535 +45,580 @@ header {
   }
 }
 
-/* Main content */
+/*
+ * Frame builder
+ */
 
-#app {
+#app.frame-builder {
   display: flex;
   flex-direction: column;
 }
 
-.app-section {
-  margin-bottom: 2em;
-}
-
-/* Extrusion designer */
-
-.extrusion-designer {
-  flex-grow: 0;
+.frame-builder {
+  /* General */
   
-  display: flex;
-  flex-direction: row;
+  a {
+    text-decoration: inherit;
+  }
   
-  .extrusion-designer-left {
+  button {
+    border-radius: 4px;
+    border: 1px solid #6c6c6c;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color, background-color 0.25s;
+  }
+  button:hover {
+    border-color: #646cff;
+  }
+  
+  .delete-button:hover {
+    border-color: red;
+  }
+  
+  h2 {
+    margin-bottom: 1em;
+  }
+
+  /* Main content */
+  
+  .app-section {
+    margin-bottom: 2em;
+  }
+
+  /* Extrusion designer */
+
+  .extrusion-designer {
     flex-grow: 0;
-    
-    margin-right: 2em;
-    padding-top: 2.4em;
-  }
-  
-  .extrusion-designer-right {
-    flex-grow: 1;
-    
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .designer-top {
-    margin-bottom: 0.5em;
-  }
-  
-  .disclaimer {
-    font-style: italic;
-    font-size: 0.8em;
-    color: #878787;
-  }
-  
-  .designer-width {
-    text-align: center;
-    
-    padding: 0 1em;
-    
-    --middle-width: 7.8em;
-    --side-spacing: 0.5em;
-    --side-width: calc(50% - var(--middle-width)/2 - var(--side-spacing));
-    
-    .designer-width-middle {
-      width: var(--middle-width);
-    }
-    
-    &::before,
-    &::after {
-      /*background-color: #000;*/
-      border-top: 1px solid black;
-      content: "";
-      display: inline-block;
-      height: 0.3em;
-      position: relative;
-      vertical-align: middle;
-      width: var(--side-width);
-    }
-    
-    &::before {
-      right: var(--side-spacing);
-      margin-left: calc(-1 * var(--side-width));
-      border-left: 1px solid black;
-    }
-    &::after {
-      left: var(--side-spacing);
-      margin-right: calc(-1 * var(--side-width));
-      border-right: 1px solid black;
-    }
-  }
-  
-  .designer-width-input {
-    max-width: 5em;
-  }
-  
-  .designer-side {
-    display: flex;
-    position: relative;
-    flex-direction: row;
-    
-    &.extrusion-slot-last {
-      margin-bottom: 2em;
-    }
-    
-    --extrusion-border-width: 2px;
-    border: solid #5e5e5e;
-    border-width: 0 var(--extrusion-border-width);
-    
-    &.extrusion-slot-first {
-      border-top-width: var(--extrusion-border-width);
-    }
-    
-    &.extrusion-slot-last {
-      border-bottom-width: var(--extrusion-border-width);
-    }
-    
-    &:not(.extrusion-slot-last) {
-      border-bottom: 1px dotted #878787;
-    }
-    
-    .extrusion-slot-label {
-      display: block;
-      position: absolute;
-      
-      left: -1.4em;
-      top: 1.2em;
-    }
-  }
-  
-  .extrusion-side {
-    --extrusion-height: 4em;
-    --extrusion-side-width: 1.2em;
-    
-    flex-grow: 1;
-    height: var(--extrusion-height);
-    line-height: calc(var(--extrusion-height) - 0.5em);
-    position: relative;
-    
-    &::before,
-    &::after {
-      content: "";
-      display: block;
-      position: absolute;
-      width: 100%;
-      /*height: 1px;*/
-      /*background-color: #878787;*/
-      border-bottom: 1px solid #878787;
-    }
-      
-    &::before {
-      top: var(--extrusion-side-width);
-    }
-    
-    &::after {
-      bottom: var(--extrusion-side-width);
-    }
-    
-    .designer-type-label {
-      display: block;
-      position: absolute;
-      
-      font-size: 2em;
-      color: #dcdcdc;
-    }
-  }
-  
-  .designer-controls {
-    display: flex;
-    flex-direction: column;
-    
-    margin-top: 2em;
-    
-    .control-group {
-      display: flex;
-      flex-direction: row;
-      
-      margin-bottom: 0.4em;
-    }
-    
-    .add-frame-button {
-      width: 100%;
-      height: 2.5em;
-    }
-    
-    .save-edit-button {
-      flex-grow: 1;
-      margin-right: 0.5em;
-      
-      &:hover {
-        border-color: limegreen;
-      }
-    }
-    
-    .reset-frame-button {
-      flex-grow: 1;
-      padding: 0 0.2em;
-      
-      &:hover {
-        border-color: red;
-      }
-    }
-    
-    .control-error {
-      width: 100%;
-      color: red;
-      text-align: center;
-    }
-  }
-  
-  .designer-type-display {
-    width: 11em;
-    height: auto;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .extrusion-cross-section svg {
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-    
-    path {
-      stroke: black;
-      stroke-width: 7px;
-      
-      fill: none;
-    }
-    
-    text {
-      font-family: Arial, sans-serif;
-      fill: #5e5e5e;
-      pointer-events: none;
-    }
-  }
-  
-  .extrusion-type-inputs {
-    margin-top: 1em;
-    
-    input, select {
-      width: 100%;
-    }
-  }
-  
-  .add-holes-button {
-    font-size: 0.9em;
-  }
-  
-  .add-holes-button.left {
-    float: left;
-  }
-  
-  .add-holes-button.right {
-    float: right;
-  }
-}
 
-.designer-holes-editor {
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  
-  cursor: copy;
-  overflow: visible;
-  
-  .designer-hole {
-    width: 0.6em;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    
-    border-left: 2px dotted darkblue;
-    
-    cursor: col-resize;
-    
-    font-size: 0.9em;
-    font-style: normal;
-    
-    &::before {
-      content: "";
-      display: block;
-      position: absolute;
-      
-      width: 22px;
-      height: 22px;
-      top: calc(50% - 11px);
-      left: -12px;
-      
-      border: 1px solid black;
-      border-radius: 50%;
-      background-color: var(--background-color);
+    display: flex;
+    flex-direction: row;
+
+    .extrusion-designer-left {
+      flex-grow: 0;
+
+      margin-right: 2em;
+      padding-top: 2.4em;
     }
-    
-    &.selected::before {
-      box-shadow: 0 0 1px 3px #646cff;
+
+    .extrusion-designer-right {
+      flex-grow: 1;
+
+      display: flex;
+      flex-direction: column;
     }
-    
-    &::after {
-      display: block;
-      position: absolute;
-      top: 0.2em;
-      left: -0.72em;
+
+    .designer-top {
+      margin-bottom: 0.5em;
     }
-    
-    &[data-type^="blind-"]::after {
-      content: "🔒";
+
+    .disclaimer {
+      font-style: italic;
+      font-size: 0.8em;
+      color: #878787;
     }
-    &.editing::after {
-      content: "✏️";
+
+    .designer-width {
+      text-align: center;
+
+      padding: 0 1em;
+
+      --middle-width: 7.8em;
+      --side-spacing: 0.5em;
+      --side-width: calc(50% - var(--middle-width) / 2 - var(--side-spacing));
+
+      .designer-width-middle {
+        width: var(--middle-width);
+      }
+
+      &::before,
+      &::after {
+        /*background-color: #000;*/
+        border-top: 1px solid black;
+        content: "";
+        display: inline-block;
+        height: 0.3em;
+        position: relative;
+        vertical-align: middle;
+        width: var(--side-width);
+      }
+
+      &::before {
+        right: var(--side-spacing);
+        margin-left: calc(-1 * var(--side-width));
+        border-left: 1px solid black;
+      }
+
+      &::after {
+        left: var(--side-spacing);
+        margin-right: calc(-1 * var(--side-width));
+        border-right: 1px solid black;
+      }
     }
-    
-    
-    .hole-label {
-      display: inline-block;
-      width: 22px;
+
+    .designer-width-input {
+      max-width: 5em;
+    }
+
+    .designer-side {
+      display: flex;
       position: relative;
-      left: -0.9em;
-      bottom: -3.5em;
+      flex-direction: row;
+
+      &.extrusion-slot-last {
+        margin-bottom: 2em;
+      }
+
+      --extrusion-border-width: 2px;
+      border: solid #5e5e5e;
+      border-width: 0 var(--extrusion-border-width);
+
+      &.extrusion-slot-first {
+        border-top-width: var(--extrusion-border-width);
+      }
+
+      &.extrusion-slot-last {
+        border-bottom-width: var(--extrusion-border-width);
+      }
+
+      &:not(.extrusion-slot-last) {
+        border-bottom: 1px dotted #878787;
+      }
+
+      .extrusion-slot-label {
+        display: block;
+        position: absolute;
+
+        left: -1.4em;
+        top: 1.2em;
+      }
     }
-    
-    .hole-controls {
-      display: none;
-      line-height: 0.9em;
-      width: 5em;
-      
-      position: absolute;
-      left: -2em;
-      bottom: -2em;
-      
-      input {
+
+    .extrusion-side {
+      --extrusion-height: 4em;
+      --extrusion-side-width: 1.2em;
+
+      flex-grow: 1;
+      height: var(--extrusion-height);
+      line-height: calc(var(--extrusion-height) - 0.5em);
+      position: relative;
+
+      &::before,
+      &::after {
+        content: "";
+        display: block;
+        position: absolute;
         width: 100%;
+        /*height: 1px;*/
+        /*background-color: #878787;*/
+        border-bottom: 1px solid #878787;
+      }
+
+      &::before {
+        top: var(--extrusion-side-width);
+      }
+
+      &::after {
+        bottom: var(--extrusion-side-width);
+      }
+
+      .designer-type-label {
+        display: block;
+        position: absolute;
+
+        font-size: 2em;
+        color: #dcdcdc;
+      }
+    }
+
+    .designer-controls {
+      display: flex;
+      flex-direction: column;
+
+      margin-top: 2em;
+
+      .control-group {
+        display: flex;
+        flex-direction: row;
+
+        margin-bottom: 0.4em;
+      }
+
+      .add-frame-button {
+        width: 100%;
+        height: 2.5em;
+      }
+
+      .save-edit-button {
+        flex-grow: 1;
+        margin-right: 0.5em;
+
+        &:hover {
+          border-color: limegreen;
+        }
+      }
+
+      .reset-frame-button {
+        flex-grow: 1;
+        padding: 0 0.2em;
+
+        &:hover {
+          border-color: red;
+        }
+      }
+
+      .control-error {
+        width: 100%;
+        color: red;
         text-align: center;
       }
     }
-    
-    &.editing {
-      .hole-label {
-        display: none;
-      }
-      .hole-controls {
-        display: inline-block;
-      }
-    }
-  }
-}
 
-/* Frame cart */
+    .designer-type-display {
+      width: 11em;
+      height: auto;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-.frame-cart-header {
-  position: relative;
-  margin-bottom: 1em;
-  
-  .header-label {
-    font-size: 1.4em;
-    font-weight: bold;
-  }
-  
-  .frame-cart-controls {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-  }
-}
-
-.frame-cart {
-  --header-background: #2b2b2b;
-  --header-text-color: #c6c6c6;
-  
-  --alternate-background: #f4f4f4;
-  
-  .row {
-    display: flex;
-    
-    height: 2em;
-    line-height: 2em;
-    
-    &:nth-of-type(even) {
-      background-color: var(--alternate-background);
-    }
-  }
-  
-  .col {
-    padding: 0 0.8em;
-    
-    &.col-0 {
-      flex-grow: 0;
-      width: 5em;
-      padding: 0;
-    }
-    &.col-1 {
-      flex-grow: 1;
-    }
-    &.col-2 {
-      flex-grow: 0;
-      width: 16em;
-    }
-    &.col-3 {
-      flex-grow: 0;
-      width: 10em;
-    }
-    &.col-4 {
-      flex-grow: 0;
-      width: 5em;
-    }
-    &.col-5 {
-      flex-grow: 0;
-      width: 8em;
-    }
-    &.col-6 {
-      flex-grow: 0;
-      width: 5em;
-    }
-    &.col-7 {
-      flex-grow: 0;
-      width: 8em;
-    }
-  }
-  
-  .frame-cart-header {
-    background: var(--header-background);
-    color: var(--header-text-color);
-    border-radius: 4px;
-    
-    margin-bottom: 0.1em;
-  }
-  
-  .frame-cart-list {
-    .row {
-      border-radius: 4px;
-    }
-    
-    .col:not(:last-child) {
-      border-right: 3px solid var(--background-color);
-    }
-    
-    .item-unit-cost, .item-total-cost {
-      text-decoration: underline dotted #9197f6;
-      
-      &::before {
-        content: "$";
-        float: left;
-      }
-    }
-    
-    .item-holes {
-      position: relative;
-      
-      &:hover .item-holes-dialog {
-        display: block;
-      }
-    }
-    
-    .item-holes-dialog {
-      display: none;
-      position: absolute;
-      width: max-content;
-      max-width: 30em;
-      min-width: 10em;
-      
-      background-color: whitesmoke;
-      border: 1px solid #878787;
-      border-radius: 4px;
-      padding: 0.4em 0.8em;
-      z-index: 1;
-      
-      bottom: 1em;
-      left: 0;
-      
-      ul {
-        padding: 0;
-        list-style: none;
-        text-align: left;
-      }
-    }
-    
-    input {
+    .extrusion-cross-section svg {
       width: 100%;
-      line-height: 1.4em;
-      margin-top: 0.1em;
+      height: 100%;
+      overflow: visible;
+
+      path {
+        stroke: black;
+        stroke-width: 7px;
+
+        fill: none;
+      }
+
+      text {
+        font-family: Arial, sans-serif;
+        fill: #5e5e5e;
+        pointer-events: none;
+      }
     }
-    button {
-      padding: 0 0.4em;
-      line-height: 1.4em;
+
+    .extrusion-type-inputs {
+      margin-top: 1em;
+
+      input, select {
+        width: 100%;
+      }
     }
-    
-    .frame-cart-item {
-      &:hover {
-        .cart-item-button {
-          opacity: 100%;
+
+    .add-holes-button {
+      font-size: 0.9em;
+    }
+
+    .add-holes-button.left {
+      float: left;
+    }
+
+    .add-holes-button.right {
+      float: right;
+    }
+  }
+
+  .designer-holes-editor {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+
+    cursor: copy;
+    overflow: visible;
+
+    .designer-hole {
+      width: 0.6em;
+      height: 100%;
+      position: absolute;
+      top: 0;
+
+      border-left: 2px dotted darkblue;
+
+      cursor: col-resize;
+
+      font-size: 0.9em;
+      font-style: normal;
+
+      &::before {
+        content: "";
+        display: block;
+        position: absolute;
+
+        width: 22px;
+        height: 22px;
+        top: calc(50% - 11px);
+        left: -12px;
+
+        border: 1px solid black;
+        border-radius: 50%;
+        background-color: var(--background-color);
+      }
+
+      &.selected::before {
+        box-shadow: 0 0 1px 3px #646cff;
+      }
+
+      &::after {
+        display: block;
+        position: absolute;
+        top: 0.2em;
+        left: -0.72em;
+      }
+
+      &[data-type^="blind-"]::after {
+        content: "🔒";
+      }
+
+      &.editing::after {
+        content: "✏️";
+      }
+
+
+      .hole-label {
+        display: inline-block;
+        width: 22px;
+        position: relative;
+        left: -0.9em;
+        bottom: -3.5em;
+      }
+
+      .hole-controls {
+        display: none;
+        line-height: 0.9em;
+        width: 5em;
+
+        position: absolute;
+        left: -2em;
+        bottom: -2em;
+
+        input {
+          width: 100%;
+          text-align: center;
+        }
+      }
+
+      &.editing {
+        .hole-label {
+          display: none;
+        }
+
+        .hole-controls {
+          display: inline-block;
         }
       }
     }
-    
-    .cart-item-button {
-      width: 1.9em;
-      height: 1.7em;
-      vertical-align: sub;
-      
-      opacity: 60%;
-      
-      transition: opacity 0.3s;
+  }
+
+  /* Frame cart */
+
+  .frame-cart-header {
+    position: relative;
+    margin-bottom: 1em;
+
+    .header-label {
+      font-size: 1.4em;
+      font-weight: bold;
+    }
+
+    .frame-cart-controls {
+      position: absolute;
+      right: 0;
+      bottom: 0;
     }
   }
-  
-  .frame-cart-footer {
-    margin: 1em 2em 0.4em 2em;
-    text-align: right;
-    
-    .frame-cart-total {
-      font-size: 1.1em;
-      
-      .total-cost::before {
-        content: "$";
+
+  .frame-cart {
+    --header-background: #2b2b2b;
+    --header-text-color: #c6c6c6;
+
+    --alternate-background: #f4f4f4;
+
+    .row {
+      display: flex;
+
+      height: 2em;
+      line-height: 2em;
+
+      &:nth-of-type(even) {
+        background-color: var(--alternate-background);
       }
     }
-    
-    .total-label {
-      font-weight: bold;
-      margin-right: 3em;
-    }
-    
-    .total-count {
-      margin-right: 4em;
-    }
-  }
-  
-  .disclaimer {
-    font-style: italic;
-    font-size: 0.9em;
-    color: #878787;
-  }
-}
 
-#dev-state {
-  font-family: "Cascadia Mono", monospace;
-  font-size: 13px;
-  text-align: left;
-  width: 40%;
-  height: 30em;
+    .col {
+      padding: 0 0.8em;
+
+      &.col-0 {
+        flex-grow: 0;
+        width: 5em;
+        padding: 0;
+      }
+
+      &.col-1 {
+        flex-grow: 1;
+      }
+
+      &.col-2 {
+        flex-grow: 0;
+        width: 16em;
+      }
+
+      &.col-3 {
+        flex-grow: 0;
+        width: 10em;
+      }
+
+      &.col-4 {
+        flex-grow: 0;
+        width: 5em;
+      }
+
+      &.col-5 {
+        flex-grow: 0;
+        width: 8em;
+      }
+
+      &.col-6 {
+        flex-grow: 0;
+        width: 5em;
+      }
+
+      &.col-7 {
+        flex-grow: 0;
+        width: 8em;
+      }
+    }
+
+    .frame-cart-header {
+      background: var(--header-background);
+      color: var(--header-text-color);
+      border-radius: 4px;
+
+      margin-bottom: 0.1em;
+    }
+
+    .frame-cart-list {
+      .row {
+        border-radius: 4px;
+      }
+
+      .col:not(:last-child) {
+        border-right: 3px solid var(--background-color);
+      }
+
+      .item-unit-cost, .item-total-cost {
+        text-decoration: underline dotted #9197f6;
+
+        &::before {
+          content: "$";
+          float: left;
+        }
+      }
+
+      .item-holes {
+        position: relative;
+
+        &:hover .item-holes-dialog {
+          display: block;
+        }
+      }
+
+      .item-holes-dialog {
+        display: none;
+        position: absolute;
+        width: max-content;
+        max-width: 30em;
+        min-width: 10em;
+
+        background-color: whitesmoke;
+        border: 1px solid #878787;
+        border-radius: 4px;
+        padding: 0.4em 0.8em;
+        z-index: 1;
+
+        bottom: 1em;
+        left: 0;
+
+        ul {
+          padding: 0;
+          list-style: none;
+          text-align: left;
+        }
+      }
+
+      input {
+        width: 100%;
+        line-height: 1.4em;
+        margin-top: 0.1em;
+      }
+
+      button {
+        padding: 0 0.4em;
+        line-height: 1.4em;
+      }
+
+      .frame-cart-item {
+        &:hover {
+          .cart-item-button {
+            opacity: 100%;
+          }
+        }
+      }
+
+      .cart-item-button {
+        width: 1.9em;
+        height: 1.7em;
+        vertical-align: sub;
+
+        opacity: 60%;
+
+        transition: opacity 0.3s;
+      }
+    }
+
+    .frame-cart-footer {
+      margin: 1em 2em 0.4em 2em;
+      text-align: right;
+
+      .frame-cart-total {
+        font-size: 1.1em;
+
+        .total-cost::before {
+          content: "$";
+        }
+      }
+
+      .total-label {
+        font-weight: bold;
+        margin-right: 3em;
+      }
+
+      .total-count {
+        margin-right: 4em;
+      }
+    }
+
+    .disclaimer {
+      font-style: italic;
+      font-size: 0.9em;
+      color: #878787;
+    }
+  }
+
+  #dev-state {
+    font-family: "Cascadia Mono", monospace;
+    font-size: 13px;
+    text-align: left;
+    width: 40%;
+    height: 30em;
+  }
+
 }
